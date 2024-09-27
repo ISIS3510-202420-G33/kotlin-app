@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.artlens.R
 import com.bumptech.glide.Glide
 
 class ImageCarouselAdapter(private val context: Context, private val imageUrls: List<String>) :
