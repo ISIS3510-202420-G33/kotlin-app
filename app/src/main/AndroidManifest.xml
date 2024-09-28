@@ -62,6 +62,14 @@
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
         </activity>
 
+        <activity
+            android:name=".view.activities.MuseumsActivity"
+            android:exported="true"
+            android:label="Museums"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        </activity>
+
+
 
 
 
