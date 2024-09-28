@@ -10,14 +10,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MainScreen(
-                onArtistDetailClick = {
-                    startActivity(Intent(this, ArtistDetailActivity::class.java))
-                },
-                onArtworkDetailClick = {
-                    startActivity(Intent(this, ArtworkDetailActivity::class.java))
-                }
-            )
+            MainScreen(onMapClick = {
+                val intent = Intent(this, MapsActivity::class.java)
+                startActivity(intent)
+            })
         }
     }
 }

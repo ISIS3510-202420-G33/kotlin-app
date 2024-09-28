@@ -38,7 +38,7 @@ android {
     }
 
     buildFeatures {
-        compose=true
+        compose = true
         viewBinding = true
     }
 
@@ -54,11 +54,15 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
-    // Maps
+    // Maps y ubicación
     implementation("com.google.android.gms:play-services-maps:18.0.2")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.maps.android:maps-compose:2.11.0")
+
+    // ConstraintLayout
     implementation(libs.androidx.constraintlayout.core)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.material3.android)
 
     // Dependencias no añadidas por ti
     testImplementation(libs.junit)
@@ -73,7 +77,6 @@ dependencies {
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     implementation("com.github.bumptech.glide:compose:1.0.0-alpha.3")
 
-
     // Retrofit para conectarse con el backend
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -85,11 +88,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0")
 
     // Jetpack Compose
+    implementation("io.coil-kt:coil-compose:2.0.0")
     implementation("androidx.compose.ui:ui:1.5.0")
     implementation("androidx.compose.material:material:1.5.0")
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
     implementation("androidx.activity:activity-compose:1.7.0")
-
 
     // Para depuración de Compose
     debugImplementation("androidx.compose.ui:ui-tooling:1.5.0")

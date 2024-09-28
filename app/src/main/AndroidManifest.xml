@@ -28,6 +28,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDVkFnRT09XqPasFWe-i5y95kxj8U3xFLE" />
 
+        <!-- MainActivity -->
         <activity
             android:name=".view.activities.MainActivity"
             android:exported="true">
@@ -37,17 +38,34 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".view.activities.ArtworkDetailActivity"
+        <!-- ArtworkDetailActivity -->
+        <activity
+            android:name=".view.activities.ArtworkDetailActivity"
             android:label="Artist Details"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             android:exported="true">
         </activity>
 
-        <activity android:name=".view.activities.ArtistDetailActivity"
+        <!-- ArtistDetailActivity -->
+        <activity
+            android:name=".view.activities.ArtistDetailActivity"
             android:label="Artist Details"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             android:exported="true">
         </activity>
+
+        <!-- MapsActivity (la que necesitas añadir) -->
+        <activity
+            android:name="com.artlens.view.activities.MapsActivity"
+            android:exported="true"
+            android:label="Map"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        </activity>
+
+
+
+
+
 
     </application>
 </manifest>
