@@ -28,6 +28,7 @@ import coil.compose.rememberImagePainter
 fun MainScreen(
     onMapClick: () -> Unit,
     onMuseumClick: () -> Unit,
+    onRecommendationClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -168,8 +169,7 @@ fun MainScreen(
                 )
             }
 
-            IconButton(
-                onClick = { /* Acción para ir a Artistas */ }
+            IconButton(onClick = onRecommendationClick
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.fire),

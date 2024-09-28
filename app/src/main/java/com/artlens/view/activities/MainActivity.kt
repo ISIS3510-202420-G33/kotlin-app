@@ -19,6 +19,11 @@ class MainActivity : ComponentActivity() {
                     val intent = Intent(this, MuseumsActivity::class.java)
                     startActivity(intent)
                 },
+                onRecommendationClick = {
+                    val intent = Intent(this, RecommendationsActivity::class.java)
+                    startActivity(intent)
+                },
+
                 onBackClick = {
                     // No hacer nada cuando se presiona la flecha de retroceso
                 }
