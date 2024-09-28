@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,12 +16,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.artlens.R
 import com.artlens.view.activities.MainActivity
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
+import androidx.compose.material.IconButton
+
 
 class MapsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,38 +42,50 @@ class MapsActivity : ComponentActivity() {
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            // 1/8 de la pantalla superior
+            // Barra superior (similar a la de MainScreen)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(80.dp)  // Aproximadamente 1/8 de la altura de la pantalla en dispositivos estándar
-                    .background(Color.LightGray)
-                    .clickable {
+                    .height(80.dp)  // Aproximadamente 1/8 de la altura de la pantalla
+                    .background(Color.White)
+            ) {
+                // Flecha de retroceso a la izquierda
+                IconButton(
+                    onClick = {
                         // Acción para volver a la MainActivity
                         val intent = Intent(context, MainActivity::class.java)
                         context.startActivity(intent)
-                    }
-            ) {
-                // Flecha de retroceso como imagen
-                Image(
-                    painter = painterResource(id = R.drawable.arrow),
-                    contentDescription = "Back Arrow",
+                    },
                     modifier = Modifier
-                        .size(40.dp)
-                        .align(Alignment.CenterStart)
-                        .padding(start = 16.dp),
-                    contentScale = ContentScale.Fit
+                        .align(Alignment.CenterStart) // Alinear a la izquierda
+                        .padding(start = 16.dp) // Añadir padding opcional
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.arrow),
+                        contentDescription = "Back Arrow",
+                        modifier = Modifier.size(30.dp)  // Tamaño ajustado de la flecha
+                    )
+                }
+
+                // Título centrado
+                Text(
+                    text = "Map of Museums",  // Título centrado de la barra
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Center) // Alineación centrada en el Box
                 )
             }
 
             // Mapa ocupando el resto del espacio
-            GoogleMapComposable(modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .padding(top = 80.dp)  // Ajustar la altura de la barra superior
+            GoogleMapComposable(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(top = 80.dp)  // Ajustar la altura para dejar espacio a la barra superior
             )
         }
     }
+
 
     @Composable
     fun GoogleMapComposable(modifier: Modifier = Modifier) {
@@ -115,6 +132,9 @@ class MapsActivity : ComponentActivity() {
             }
         }
     }
+
+
+
 }
 
 

@@ -16,10 +16,14 @@ class MainActivity : ComponentActivity() {
                     startActivity(intent)
                 },
                 onMuseumClick = {
-                    val intent = Intent(this, MuseumsActivity::class.java) // Abre MuseumsActivity
+                    val intent = Intent(this, MuseumsActivity::class.java)
                     startActivity(intent)
+                },
+                onBackClick = {
+                    // No hacer nada cuando se presiona la flecha de retroceso
                 }
             )
         }
     }
 }
+

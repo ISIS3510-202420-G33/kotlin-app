@@ -1,6 +1,4 @@
 package com.artlens.view.composables
-
-import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -23,114 +21,130 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberImagePainter
 import com.artlens.R
+import coil.compose.rememberImagePainter
 
-// Agregar el parámetro `onMapClick` y `onMuseumClick`
 @Composable
 fun MainScreen(
-    onMapClick: () -> Unit,   // Callback para abrir el mapa
-    onMuseumClick: () -> Unit // Callback para abrir la lista de museos
+    onMapClick: () -> Unit,
+    onMuseumClick: () -> Unit,
+    onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Contenido principal con peso para ocupar el espacio disponible
-            Column(
+            // Barra superior con la flecha atrás y un título centrado
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .height(80.dp)
+                    .background(Color.White),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Título
+                // Flecha de retroceso
+                IconButton(onClick = onBackClick) {
+                    Image(
+                        painter = painterResource(id = R.drawable.arrow),
+                        contentDescription = "Back Arrow",
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+
+                // Título centrado
                 Text(
-                    text = "Welcome to Artlens!",
+                    text = "HOME",
                     fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 16.dp)
+                    fontWeight = FontWeight.Bold
                 )
 
-                // Barra de búsqueda simulada
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                        .background(Color(0xFFE0E0E0), shape = CircleShape)
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                ) {
-                    Text(
-                        text = "Find a piece of art, an artist or a museum",
-                        color = Color.Gray,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
+                // Icono de perfil a la derecha
+                IconButton(onClick = { /* Acción para abrir el perfil */ }) {
+                    Image(
+                        painter = painterResource(id = R.drawable.profile),
+                        contentDescription = "Profile Icon",
+                        modifier = Modifier.size(30.dp)
                     )
                 }
+            }
 
-                // Carrusel de imágenes
-                Spacer(modifier = Modifier.height(100.dp))
-                ImageCarousel(
-                    imageUrls = listOf(
-                        "https://th.bing.com/th/id/R.ac9e679812389a4b4abb15c8cf4705ee?rik=7Gp6HUNIzI7AxA&riu=http%3A%2F%2Fmedia.architecturaldigest.com%2Fphotos%2F5900cc370638dd3b70018b33%2Fmaster%2Fpass%2FSecrets+of+Louvre+1.jpg&ehk=hAKFCm8l7I4rrpUDUohq%2BqtJ%2F%2B4bovQlQM2lH3C4fCk%3D&risl=&pid=ImgRaw&r=0",
-                        "https://th.bing.com/th/id/R.f53b1a450649b368e2ab3f84efea6000?rik=5PTXwoJnk%2BwbvQ&pid=ImgRaw&r=0",
-                        "https://th.bing.com/th/id/OIP.v8lqJMlsSFHFBnIMj2z3jgHaDv?rs=1&pid=ImgDetMain"
-                    )
+            // Contenido principal
+            Spacer(modifier = Modifier.height(16.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+                    .background(Color(0xFFE0E0E0), shape = CircleShape)
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+            ) {
+                Text(
+                    text = "Find a piece of art, an artist or a museum",
+                    color = Color.Gray,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
+            }
 
-                // Botones de acción
-                Spacer(modifier = Modifier.height(150.dp))
-                Button(
-                    onClick = onMuseumClick, // Acción al hacer click en "View Museums"
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Black,
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text("View Museums")
-                }
+            Spacer(modifier = Modifier.height(100.dp))
+            ImageCarousel(
+                imageUrls = listOf(
+                    "https://c8.alamy.com/comp/DTR5X3/gold-museum-museo-del-oro-in-bogota-columbia-DTR5X3.jpg",
+                    "https://c8.alamy.com/comp/DTR5X3/gold-museum-museo-del-oro-in-bogota-columbia-DTR5X3.jpg",
+                    "https://c8.alamy.com/comp/DTR5X3/gold-museum-museo-del-oro-in-bogota-columbia-DTR5X3.jpg"
+                )
+            )
 
-                // Botón que abre el mapa, usando el `onMapClick`
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = onMapClick, // Acción para abrir el mapa
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Black,
-                        contentColor = Color.White // Para hacer el texto blanco
-                    )
-                ) {
-                    Text("View Map")
-                }
+            // Botones de acción
+            Spacer(modifier = Modifier.height(150.dp))
+            Button(
+                onClick = onMuseumClick,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Black,
+                    contentColor = Color.White
+                )
+            ) {
+                Text("View Museums")
+            }
 
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = { /* Acción para ver artistas */ },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Black,
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text("View Artists")
-                }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = onMapClick,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Black,
+                    contentColor = Color.White
+                )
+            ) {
+                Text("View Map")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = { /* Acción para ver artistas */ },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Black,
+                    contentColor = Color.White
+                )
+            ) {
+                Text("View Artists")
             }
         }
 
-        // Barra de navegación inferior sobrepuesta (igual que en MuseumsScreen)
+        // Barra de navegación inferior sobrepuesta
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .background(Color.White)
                 .padding(vertical = 8.dp)
-                .height(50.dp),  // Tamaño ajustado de la barra inferior
+                .height(50.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -140,7 +154,7 @@ fun MainScreen(
                 Image(
                     painter = painterResource(id = R.drawable.house),
                     contentDescription = "Home",
-                    modifier = Modifier.size(30.dp) // Tamaño ajustado de los íconos
+                    modifier = Modifier.size(30.dp)
                 )
             }
 
@@ -150,7 +164,7 @@ fun MainScreen(
                 Image(
                     painter = painterResource(id = R.drawable.camera),
                     contentDescription = "Museos",
-                    modifier = Modifier.size(30.dp) // Tamaño ajustado de los íconos
+                    modifier = Modifier.size(30.dp)
                 )
             }
 
@@ -160,7 +174,7 @@ fun MainScreen(
                 Image(
                     painter = painterResource(id = R.drawable.fire),
                     contentDescription = "Artistas",
-                    modifier = Modifier.size(30.dp) // Tamaño ajustado de los íconos
+                    modifier = Modifier.size(30.dp)
                 )
             }
         }
