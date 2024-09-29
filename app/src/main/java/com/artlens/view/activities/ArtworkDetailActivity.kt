@@ -36,16 +36,7 @@ class ArtworkDetailActivity : ComponentActivity() {
 
             // Configurar la estructura general de la pantalla con Scaffold
             Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = { Text(text = "Artwork Details") },
-                        navigationIcon = {
-                            IconButton(onClick = { onBackPressed() }) {
-                                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Go Back")
-                            }
-                        }
-                    )
-                }
+
             ) {
                 // Mostrar la pantalla de detalle de la obra
                 ArtworkDetailScreen(

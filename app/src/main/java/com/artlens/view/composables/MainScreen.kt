@@ -1,38 +1,34 @@
 package com.artlens.view.composables
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.artlens.R
 import coil.compose.rememberImagePainter
+import com.artlens.R
 
 @Composable
 fun MainScreen(
+    imageUrls: List<String>,  // Recibe las imágenes del backend
     onMapClick: () -> Unit,
     onMuseumClick: () -> Unit,
     onRecommendationClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    val context = LocalContext.current
-
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -74,7 +70,6 @@ fun MainScreen(
                 }
             }
 
-            // Contenido principal
             Spacer(modifier = Modifier.height(16.dp))
             Box(
                 modifier = Modifier
@@ -92,13 +87,9 @@ fun MainScreen(
             }
 
             Spacer(modifier = Modifier.height(100.dp))
-            ImageCarousel(
-                imageUrls = listOf(
-                    "https://c8.alamy.com/comp/DTR5X3/gold-museum-museo-del-oro-in-bogota-columbia-DTR5X3.jpg",
-                    "https://c8.alamy.com/comp/DTR5X3/gold-museum-museo-del-oro-in-bogota-columbia-DTR5X3.jpg",
-                    "https://c8.alamy.com/comp/DTR5X3/gold-museum-museo-del-oro-in-bogota-columbia-DTR5X3.jpg"
-                )
-            )
+
+            // Carrusel de imágenes con URLs del backend
+            MuseumImageCarousel(imageUrls)  // Usa la función renombrada
 
             // Botones de acción
             Spacer(modifier = Modifier.height(150.dp))
@@ -149,9 +140,7 @@ fun MainScreen(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(
-                onClick = { /* Acción para ir a Home */ }
-            ) {
+            IconButton(onClick = { /* Acción para ir a Home */ }) {
                 Image(
                     painter = painterResource(id = R.drawable.house),
                     contentDescription = "Home",
@@ -159,9 +148,7 @@ fun MainScreen(
                 )
             }
 
-            IconButton(
-                onClick = { /* Acción para ir a Museos */ }
-            ) {
+            IconButton(onClick = { /* Acción para ir a Museos */ }) {
                 Image(
                     painter = painterResource(id = R.drawable.camera),
                     contentDescription = "Museos",
@@ -169,8 +156,7 @@ fun MainScreen(
                 )
             }
 
-            IconButton(onClick = onRecommendationClick
-            ) {
+            IconButton(onClick = onRecommendationClick) {
                 Image(
                     painter = painterResource(id = R.drawable.fire),
                     contentDescription = "Artistas",
@@ -182,7 +168,7 @@ fun MainScreen(
 }
 
 @Composable
-fun ImageCarousel(imageUrls: List<String>) {
+fun MuseumImageCarousel(imageUrls: List<String>) {  // Función para mostrar el carrusel
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()

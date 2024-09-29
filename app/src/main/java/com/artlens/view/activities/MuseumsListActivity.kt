@@ -26,12 +26,27 @@ class MuseumsListActivity : ComponentActivity() {
             val museumsState by museumsViewModel.museumsLiveData.observeAsState(emptyList()) // Observa la lista de museos
 
             // Pasar la lista de museos y el manejador del click a la pantalla de lista
-            MuseumsListScreen(museums = museumsState) { museumId ->
+            MuseumsListScreen(
+                museums = museumsState,
+                onBackClick = { navigateToMainActivity() }, // Flecha de regreso
+                onHomeClick = { navigateToMainActivity() }, // Botón de Home
+                onRecommendationClick = { navigateToRecommendations() } // Fuego para recomendaciones
+            ) { museumId ->
                 // Crear un intent para ir a MuseumsDetailActivity con el ID del museo seleccionado
                 val intent = Intent(this, MuseumsDetailActivity::class.java)
                 intent.putExtra("MUSEUM_ID", museumId)
                 startActivity(intent)
             }
         }
+    }
+
+    private fun navigateToMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToRecommendations() {
+        val intent = Intent(this, RecommendationsActivity::class.java)
+        startActivity(intent)
     }
 }

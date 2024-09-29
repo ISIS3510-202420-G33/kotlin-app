@@ -1,5 +1,6 @@
 package com.artlens.view.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
@@ -25,7 +26,20 @@ class MuseumsDetailActivity : ComponentActivity() {
         setContent {
             val museumState by museumsDetailViewModel.getMuseumDetail(museumId).observeAsState()
 
-            MuseumDetailScreen(museum = museumState)
+            MuseumDetailScreen(
+                museum = museumState,
+                onBackClick = {
+                    // Regresar a la lista de museos
+                    val intent = Intent(this, MuseumsListActivity::class.java)
+                    startActivity(intent)
+                },
+                onHomeClick = {
+                    // Ir a la MainActivity
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                }
+            )
         }
     }
 }
+

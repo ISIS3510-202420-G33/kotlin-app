@@ -17,15 +17,15 @@ class MuseumService(private val museumApi: MuseumApi) {
         museumApi.getMuseumDetail(museumId).enqueue(object : Callback<List<MuseumResponse>> {
             override fun onResponse(call: Call<List<MuseumResponse>>, response: Response<List<MuseumResponse>>) {
                 if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
-                    // Obtener el primer museo de la lista
                     museumLiveData.value = response.body()?.first()
                 } else {
+                    // Manejo de error: podrías retornar un valor de error en lugar de null
                     Log.e("MuseumService", "Error: ${response.errorBody()?.string()}")
                 }
             }
 
             override fun onFailure(call: Call<List<MuseumResponse>>, t: Throwable) {
-                museumLiveData.value = null  // Manejo de error
+                // No se asigna null directamente, manejo el error de alguna forma
                 Log.e("MuseumService", "Failure: ${t.message}")
             }
         })
@@ -37,10 +37,7 @@ class MuseumService(private val museumApi: MuseumApi) {
         val museumLiveData = MutableLiveData<List<MuseumResponse>>()
 
         museumApi.getAllMuseums().enqueue(object : Callback<List<MuseumResponse>> {
-            override fun onResponse(
-                call: Call<List<MuseumResponse>>,
-                response: Response<List<MuseumResponse>>
-            ) {
+            override fun onResponse(call: Call<List<MuseumResponse>>, response: Response<List<MuseumResponse>>) {
                 if (response.isSuccessful && response.body() != null) {
                     museumLiveData.value = response.body()
                 } else {
@@ -56,6 +53,5 @@ class MuseumService(private val museumApi: MuseumApi) {
 
         return museumLiveData
     }
-
-
 }
+
