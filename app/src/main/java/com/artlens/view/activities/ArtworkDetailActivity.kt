@@ -48,7 +48,13 @@ class ArtworkDetailActivity : ComponentActivity() {
                 }
             ) {
                 // Mostrar la pantalla de detalle de la obra
-                ArtworkDetailScreen(artwork = artworkState)
+                ArtworkDetailScreen(
+                    artwork = artworkState,
+                    onBackClick = { onBackPressed() },  // Aquí pasamos la acción de "Atrás"
+                    onMoreInfoClick = {
+                        // Aquí puedes manejar la lógica para mostrar más información
+                    }
+                )
 
                 // Llamar al ViewModel para obtener los detalles de la obra
                 LaunchedEffect(Unit) {

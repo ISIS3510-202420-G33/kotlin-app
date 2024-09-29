@@ -2,6 +2,7 @@ package com.artlens.view.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,7 +23,10 @@ import coil.compose.rememberImagePainter
 import com.artlens.R
 
 @Composable
-fun RecommendationsScreen(onBackClick: () -> Unit) {
+fun RecommendationsScreen(
+    onBackClick: () -> Unit,
+    onRecommendationClick: (Int) -> Unit // Aceptamos un callback con el ID de la obra
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -70,7 +74,13 @@ fun RecommendationsScreen(onBackClick: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(recommendations) { recommendation ->
-                    RecommendationCard(recommendation)
+                    RecommendationCard(
+                        recommendation = recommendation,
+                        onClick = {
+                            // Al hacer clic en la tarjeta, llamamos al callback pasando un ID por defecto (1)
+                            onRecommendationClick(1)
+                        }
+                    )
                 }
             }
         }
@@ -114,14 +124,17 @@ fun RecommendationsScreen(onBackClick: () -> Unit) {
 }
 
 @Composable
-fun RecommendationCard(recommendation: Recommendation) {
+fun RecommendationCard(recommendation: Recommendation, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
+        // Tarjeta clicable
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onClick() }, // Hacemos la tarjeta clicable
             elevation = 4.dp
         ) {
             Row(
@@ -174,6 +187,7 @@ fun RecommendationCard(recommendation: Recommendation) {
         )
     }
 }
+
 
 
 
