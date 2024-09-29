@@ -33,4 +33,25 @@ class ArtistService(private val artistApi: ArtistApi) {
 
         return artistLiveData
     }
+
+    fun getAllArtists(): LiveData<List<ArtistResponse>> {
+        val artistsLiveData = MutableLiveData<List<ArtistResponse>>()
+
+        artistApi.getAllArtists().enqueue(object : Callback<List<ArtistResponse>> {
+            override fun onResponse(call: Call<List<ArtistResponse>>, response: Response<List<ArtistResponse>>) {
+                if (response.isSuccessful && response.body() != null) {
+                    artistsLiveData.value = response.body()
+                } else {
+                    Log.e("ArtistService", "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<ArtistResponse>>, t: Throwable) {
+                artistsLiveData.value = emptyList()  // Retornamos una lista vacía si falla
+                Log.e("ArtistService", "Failure: ${t.message}")
+            }
+        })
+
+        return artistsLiveData
+    }
 }

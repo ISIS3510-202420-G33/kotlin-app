@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
                     startActivity(intent)
                 },
                 onMuseumClick = {
-                    val intent = Intent(this, MuseumsActivity::class.java)
+                    val intent = Intent(this, MuseumsListActivity::class.java)
                     startActivity(intent)
                 },
                 onRecommendationClick = {

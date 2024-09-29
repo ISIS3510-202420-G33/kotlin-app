@@ -6,6 +6,9 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface ArtistApi {
-    @GET("artist/{id}")
+    @GET("artists/{id}")
     fun getArtistDetail(@Path("id") id: Int): Call<List<ArtistResponse>>
+
+    @GET("artists/")
+    fun getAllArtists(): Call<List<ArtistResponse>>
 }
