@@ -39,6 +39,7 @@ class MuseumService(private val museumApi: MuseumApi) {
         museumApi.getAllMuseums().enqueue(object : Callback<List<MuseumResponse>> {
             override fun onResponse(call: Call<List<MuseumResponse>>, response: Response<List<MuseumResponse>>) {
                 if (response.isSuccessful && response.body() != null) {
+                    Log.d("MuseumService", "Museums fetched: ${response.body()?.size}")
                     museumLiveData.value = response.body()
                 } else {
                     Log.e("MuseumService", "Error: ${response.errorBody()?.string()}")

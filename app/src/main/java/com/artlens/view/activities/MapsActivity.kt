@@ -1,36 +1,55 @@
 package com.artlens.view.activities
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
 import com.artlens.R
-import com.artlens.view.activities.MainActivity
+import com.artlens.view.viewmodels.MuseumsListViewModel
+import com.artlens.data.facade.FacadeProvider
+import com.artlens.data.facade.ViewModelFactory
+import com.artlens.data.models.MuseumResponse
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
-import androidx.compose.material.IconButton
-
+import kotlinx.coroutines.launch
 
 class MapsActivity : ComponentActivity() {
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val museumsViewModel: MuseumsListViewModel by viewModels {
+        ViewModelFactory(FacadeProvider.facade)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Inicializamos el cliente para obtener la ubicación del usuario
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
         setContent {
+            // Contenedor del contenido
             MapScreen()
         }
     }
@@ -38,6 +57,28 @@ class MapsActivity : ComponentActivity() {
     @Composable
     fun MapScreen() {
         val context = LocalContext.current
+        var userLat by remember { mutableStateOf(4.60971) }  // Bogotá como valor por defecto
+        var userLng by remember { mutableStateOf(-74.08175) }
+
+        // Obtenemos la ubicación del usuario cuando el Composable se inicializa
+        LaunchedEffect(Unit) {
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                    location?.let {
+                        userLat = it.latitude
+                        userLng = it.longitude
+                    }
+                }
+            }
+        }
+
+        // Obtenemos los museos más cercanos observando el LiveData
+        val closestMuseumsLiveData = museumsViewModel.getClosestMuseums(userLat, userLng)
+        val closestMuseums by closestMuseumsLiveData.observeAsState(emptyList())  // Observa los cambios
 
         Box(
             modifier = Modifier.fillMaxSize()
@@ -77,66 +118,38 @@ class MapsActivity : ComponentActivity() {
             }
 
             // Mapa ocupando el resto del espacio
-            GoogleMapComposable(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .padding(top = 80.dp)  // Ajustar la altura para dejar espacio a la barra superior
-            )
+            GoogleMapComposable(userLat, userLng, closestMuseums)
         }
     }
 
-
     @Composable
-    fun GoogleMapComposable(modifier: Modifier = Modifier) {
-        val bogota = LatLng(4.60971, -74.08175)
+    fun GoogleMapComposable(userLat: Double, userLng: Double, museums: List<MuseumResponse>) {
         val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(bogota, 12f)
+            position = CameraPosition.fromLatLngZoom(LatLng(userLat, userLng), 12f)
         }
 
+        val context = LocalContext.current
+
         GoogleMap(
-            modifier = modifier,
-            cameraPositionState = cameraPositionState
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(top = 80.dp),  // Ajustar la altura para dejar espacio a la barra superior
+            cameraPositionState = cameraPositionState,
+            properties = MapProperties(isMyLocationEnabled = ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED)
         ) {
-            val museums = listOf(
-                LatLng(4.601172, -74.066151), // Museo Nacional
-                LatLng(4.610077, -74.070797), // Museo del Oro
-                LatLng(4.597246, -74.076713), // Museo de Arte Moderno
-                LatLng(4.609874, -74.073228), // Museo Botero
-                LatLng(4.612463, -74.069598), // Casa Museo Quinta de Bolívar
-                LatLng(4.601467, -74.064678), // Museo de Bogotá
-                LatLng(4.614275, -74.070048), // Museo Colonial
-                LatLng(4.610474, -74.064987), // Museo Arqueológico
-                LatLng(4.613337, -74.068934), // Museo de Trajes
-                LatLng(4.622398, -74.068244)  // Museo de los Niños
-            )
-
-            val museumNames = listOf(
-                "Museo Nacional",
-                "Museo del Oro",
-                "Museo de Arte Moderno",
-                "Museo Botero",
-                "Casa Museo Quinta de Bolívar",
-                "Museo de Bogotá",
-                "Museo Colonial",
-                "Museo Arqueológico",
-                "Museo de Trajes",
-                "Museo de los Niños"
-            )
-
-            museums.forEachIndexed { index, latLng ->
+            // Solo mostramos los 5 museos más cercanos
+            museums.forEach { museum ->
+                val museumLocation = LatLng(museum.fields.latitude, museum.fields.longitude)
                 Marker(
-                    state = MarkerState(position = latLng),
-                    title = museumNames[index]
+                    state = MarkerState(position = museumLocation),
+                    title = museum.fields.name
                 )
             }
         }
     }
 
-
-
 }
-
-
-
-
