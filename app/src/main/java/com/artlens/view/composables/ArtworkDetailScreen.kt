@@ -88,6 +88,21 @@ fun ArtworkDetailScreen(
                 }
             }
 
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp), // Espacio debajo de la barra superior
+                horizontalArrangement = Arrangement.End // Alineamos el contenido a la derecha
+            ) {
+                IconButton(onClick = { /* Acción de estrella */ }) {
+                    Image(
+                        painter = painterResource(id = R.drawable.star),
+                        contentDescription = "Star Icon",
+                        modifier = Modifier.size(40.dp) // Tamaño del icono
+                    )
+                }
+            }
+
             artwork?.let {
                 // Nombre de la obra
                 Text(
