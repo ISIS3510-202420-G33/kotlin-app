@@ -30,7 +30,7 @@ import com.bumptech.glide.request.RequestOptions
 fun ArtworkDetailScreen(
     artwork: ArtworkResponse?,
     onBackClick: () -> Unit,
-    onMoreInfoClick: () -> Unit
+    onMoreInfoClick: (Int) -> Unit
 ) {
     val context = LocalContext.current
     var newComment by remember { mutableStateOf("") }
@@ -142,7 +142,7 @@ fun ArtworkDetailScreen(
 
                 // Botón de ver más detalles
                 Button(
-                    onClick = onMoreInfoClick,
+                    onClick = { onMoreInfoClick(it.fields.artist) }, // Pasa el ID del artista
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.Black,

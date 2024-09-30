@@ -1,6 +1,7 @@
 package com.artlens.view.activities
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
@@ -42,8 +43,11 @@ class ArtworkDetailActivity : ComponentActivity() {
                 ArtworkDetailScreen(
                     artwork = artworkState,
                     onBackClick = { onBackPressed() },  // Aquí pasamos la acción de "Atrás"
-                    onMoreInfoClick = {
-                        // Aquí puedes manejar la lógica para mostrar más información
+                    onMoreInfoClick = { artistId ->  // Aquí se recibe el artistId
+                        // Lanza la actividad de detalles del artista
+                        val intent = Intent(this, ArtistDetailActivity::class.java)
+                        intent.putExtra("ARTIST_ID", artistId)
+                        startActivity(intent)
                     }
                 )
 

@@ -11,6 +11,8 @@ import com.artlens.view.composables.MainScreen
 import com.artlens.view.viewmodels.MuseumsListViewModel
 import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.facade.ViewModelFactory
+import com.artlens.view.activities.MuseumsDetailActivity
+
 
 class MainActivity : ComponentActivity() {
 
@@ -25,17 +27,25 @@ class MainActivity : ComponentActivity() {
             // Observar el estado de los museos
             val museums by museumsViewModel.museumsLiveData.observeAsState(emptyList())
 
-            // Extraer las URLs de las imágenes de los museos
+            // Extraer las URLs de las imágenes y los IDs de los museos
             val imageUrls = museums.map { it.fields.image }
+            val museumIds = museums.map { it.pk }  // Extraer los IDs de los museos
 
-            // Llamamos a MainScreen y le pasamos las imágenes
             MainScreen(
-                imageUrls = imageUrls,  // Aquí se pasan las imágenes al carrusel
+                imageUrls = imageUrls,
+                museumIds = museumIds,  // Pasar los IDs de los museos al carrusel
                 onMapClick = {
                     val intent = Intent(this, MapsActivity::class.java)
                     startActivity(intent)
                 },
-                onMuseumClick = {
+                onMuseumClick = { museumId ->
+                    // Redirigir a la pantalla de detalles del museo seleccionado
+                    val intent = Intent(this, MuseumsDetailActivity::class.java)
+                    intent.putExtra("MUSEUM_ID", museumId)
+                    startActivity(intent)
+                },
+                onMuseumsClick = {
+                    // Regresar a la lista de museos
                     val intent = Intent(this, MuseumsListActivity::class.java)
                     startActivity(intent)
                 },
@@ -48,5 +58,6 @@ class MainActivity : ComponentActivity() {
                 }
             )
         }
+
     }
 }
