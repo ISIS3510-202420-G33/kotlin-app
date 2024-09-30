@@ -10,6 +10,7 @@ interface ArtlensFacade {
     fun getArtistDetail(artistId: Int): LiveData<ArtistResponse>
     fun getAllArtists(): LiveData<List<ArtistResponse>>
     fun getArtworkDetail(artworkId: Int): LiveData<ArtworkResponse>
+    fun getAllArtworks(): LiveData<List<ArtworkResponse>>
     fun getMuseumDetail(museumId: Int): LiveData<MuseumResponse>
     fun getAllMuseums(): LiveData<List<MuseumResponse>>
 }

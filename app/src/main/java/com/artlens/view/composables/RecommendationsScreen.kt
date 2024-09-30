@@ -1,5 +1,6 @@
 package com.artlens.view.composables
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +10,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,28 +24,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.artlens.R
+import com.artlens.view.viewmodels.ArtworkListViewModel
 
 @Composable
 fun RecommendationsScreen(
     onBackClick: () -> Unit,
-    onRecommendationClick: (Int) -> Unit // Aceptamos un callback con el ID de la obra
+    onRecommendationClick: (Int) -> Unit,
+    artworkListViewModel: ArtworkListViewModel // Recibe el ViewModel como parámetro
 ) {
+    // Observa los datos desde el ViewModel
+    val artworks by artworkListViewModel.artworksLiveData.observeAsState(emptyList())
+    Log.d("RecommendationsScreen", "Number of artworks: ${artworks.size}")
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Barra superior con la flecha atrás y el título
+            // Barra superior con la flecha atrás y el título centrado
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(80.dp)
                     .background(Color.White),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Flecha de retroceso
+                // Flecha de retroceso alineada a la izquierda
                 IconButton(onClick = onBackClick) {
                     Image(
                         painter = painterResource(id = R.drawable.arrow),
@@ -51,77 +59,39 @@ fun RecommendationsScreen(
                     )
                 }
 
-                // Título centrado
-                Text(
-                    text = "RECOMMENDATIONS",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-                // Icono de perfil
-                IconButton(onClick = { /* Acción de perfil */ }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = "Profile Icon",
-                        modifier = Modifier.size(30.dp)
+                // Caja que llena el espacio restante y centra el texto
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "RECOMMENDATIONS",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center // Asegura que el texto esté centrado
                     )
                 }
             }
 
-            // Contenido scrolleable con las tarjetas de recomendaciones
+            // Lista de recomendaciones con los datos del backend
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(recommendations) { recommendation ->
+                items(artworks.take(5)) { artwork ->  // Solo muestra las primeras 5 obras
                     RecommendationCard(
-                        recommendation = recommendation,
+                        recommendation = Recommendation(
+                            title = artwork.fields.name,
+                            description = limitWords(artwork.fields.advancedInfo ?: "No description available", 20),
+                            imageUrl = artwork.fields.image,
+                        ),
                         onClick = {
-                            // Al hacer clic en la tarjeta, llamamos al callback pasando un ID por defecto (1)
-                            onRecommendationClick(1)
+                            onRecommendationClick(artwork.pk)  // Usa el ID real de la obra
                         }
                     )
                 }
             }
         }
-
-        // Barra de navegación inferior sobrepuesta
-        Row(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(vertical = 8.dp)
-                .height(50.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { /* Acción para ir a Home */ }) {
-                Image(
-                    painter = painterResource(id = R.drawable.house),
-                    contentDescription = "Home",
-                    modifier = Modifier.size(30.dp)
-                )
-            }
-
-            IconButton(onClick = { /* Acción para ir a Museos */ }) {
-                Image(
-                    painter = painterResource(id = R.drawable.camera),
-                    contentDescription = "Museos",
-                    modifier = Modifier.size(30.dp)
-                )
-            }
-
-            IconButton(onClick = { /* Acción para ir a Artistas */ }) {
-                Image(
-                    painter = painterResource(id = R.drawable.fire),
-                    contentDescription = "Artistas",
-                    modifier = Modifier.size(30.dp)
-                )
-            }
-        }
     }
 }
+
 
 @Composable
 fun RecommendationCard(recommendation: Recommendation, onClick: () -> Unit) {
@@ -130,11 +100,12 @@ fun RecommendationCard(recommendation: Recommendation, onClick: () -> Unit) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        // Tarjeta clicable
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onClick() }, // Hacemos la tarjeta clicable
+                .clickable {
+                    Log.d("RecommendationCard", "Card clicked: ${recommendation.title}")
+                    onClick() },  // Hacemos la tarjeta clicable
             elevation = 4.dp
         ) {
             Row(
@@ -169,7 +140,7 @@ fun RecommendationCard(recommendation: Recommendation, onClick: () -> Unit) {
                     painter = rememberImagePainter(data = recommendation.imageUrl),
                     contentDescription = recommendation.title,
                     modifier = Modifier
-                        .weight(0.4f) // Ocupa el 40% del ancho de la tarjeta
+                        .weight(0.4f)
                         .height(120.dp)  // Ajuste para imagen rectangular
                         .clip(MaterialTheme.shapes.medium),
                     contentScale = ContentScale.Crop
@@ -177,7 +148,7 @@ fun RecommendationCard(recommendation: Recommendation, onClick: () -> Unit) {
             }
         }
 
-        // Línea divisoria negra delgada debajo de la tarjeta
+        // Línea divisoria debajo de la tarjeta
         Divider(
             color = Color.Black,
             thickness = 1.dp,
@@ -188,9 +159,6 @@ fun RecommendationCard(recommendation: Recommendation, onClick: () -> Unit) {
     }
 }
 
-
-
-
 // Modelo de datos para las recomendaciones
 data class Recommendation(
     val title: String,
@@ -198,21 +166,12 @@ data class Recommendation(
     val imageUrl: String
 )
 
-// Lista de recomendaciones
-val recommendations = listOf(
-    Recommendation(
-        title = "Nighthawks",
-        description = "A painting by Edward Hopper, depicting four people in an urban diner at night.",
-        imageUrl = "https://th.bing.com/th/id/R.8979cc84bd3032a79edde4d6ea501807?rik=ay2ZGiXakdQEPQ&pid=ImgRaw&r=0"
-    ),
-    Recommendation(
-        title = "The scream",
-        description = "The famous painting by Norwegian artist Edvard Munch.",
-        imageUrl = "https://th.bing.com/th/id/R.8979cc84bd3032a79edde4d6ea501807?rik=ay2ZGiXakdQEPQ&pid=ImgRaw&r=0"
-    ),
-    Recommendation(
-        title = "Saturn",
-        description = "Saturn Devouring His Son by Francisco Goya.",
-        imageUrl = "https://th.bing.com/th/id/R.8979cc84bd3032a79edde4d6ea501807?rik=ay2ZGiXakdQEPQ&pid=ImgRaw&r=0"
-    )
-)
+// Función auxiliar para limitar las palabras
+fun limitWords(text: String, wordLimit: Int): String {
+    val words = text.split(" ") // Dividimos el texto en palabras
+    return if (words.size > wordLimit) {
+        words.take(wordLimit).joinToString(" ") + "..." // Limitamos las palabras y añadimos "..."
+    } else {
+        text // Retorna el texto completo si es menor o igual al límite
+    }
+}

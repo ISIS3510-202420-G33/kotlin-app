@@ -27,7 +27,7 @@ class ArtworkDetailActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         // Obtener el ID de la obra que queremos mostrar
-        val artworkId = intent.getIntExtra("id", 1)
+        val artworkId = intent.getIntExtra("id", 2)
 
         // Usar setContent para definir el layout con Jetpack Compose
         setContent {

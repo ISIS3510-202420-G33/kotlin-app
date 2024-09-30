@@ -121,11 +121,9 @@ fun ArtworkDetailScreen(
 
 
                 // Interpretación
-                Text(text = "Interpretations:", fontWeight = FontWeight.Bold)
+                Text(text = "Interpretations: ${it.fields.interpretation}", style = MaterialTheme.typography.body1)
                 Text(
-                    text = "One of the most fascinating features is the expression of the Mona Lisa...",
-                    style = MaterialTheme.typography.body1
-                )
+                    text = "Advance Information: ${it.fields.advancedInfo}", style = MaterialTheme.typography.body1)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -151,7 +149,7 @@ fun ArtworkDetailScreen(
                         contentColor = Color.White
                     )
                 ) {
-                    Text("See more advanced information")
+                    Text("View Artist Detail")
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))

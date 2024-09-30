@@ -26,6 +26,11 @@ class Facade(
         return artworkService.getArtworkDetail(artworkId)
     }
 
+    // Agregar la función para obtener todas las obras de arte
+    override fun getAllArtworks(): LiveData<List<ArtworkResponse>> {
+        return artworkService.getAllArtworks()
+    }
+
     override fun getMuseumDetail(museumId: Int): LiveData<MuseumResponse> {
         return museumService.getMuseumDetail(museumId)
     }

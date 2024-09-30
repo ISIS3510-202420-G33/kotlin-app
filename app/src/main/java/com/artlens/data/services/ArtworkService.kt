@@ -17,7 +17,6 @@ class ArtworkService(private val artworkApi: ArtworkApi) {
         artworkApi.getArtworkDetail(artworkId).enqueue(object : Callback<List<ArtworkResponse>> {
             override fun onResponse(call: Call<List<ArtworkResponse>>, response: Response<List<ArtworkResponse>>) {
                 if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
-                    // Obtener el primer artwork de la lista
                     artworkLiveData.value = response.body()?.first()
                 } else {
                     Log.e("ArtworkService", "Error: ${response.errorBody()?.string()}")
@@ -25,12 +24,35 @@ class ArtworkService(private val artworkApi: ArtworkApi) {
             }
 
             override fun onFailure(call: Call<List<ArtworkResponse>>, t: Throwable) {
-                artworkLiveData.value = null  // Manejo de error
+                artworkLiveData.value = null
                 Log.e("ArtworkService", "Failure: ${t.message}")
             }
         })
 
         return artworkLiveData
+    }
+
+    // Nuevo método para obtener las primeras 5 obras de arte
+    fun getAllArtworks(): LiveData<List<ArtworkResponse>> {
+        val artworksLiveData = MutableLiveData<List<ArtworkResponse>>()
+
+        artworkApi.getAllArtworks().enqueue(object : Callback<List<ArtworkResponse>> {
+            override fun onResponse(call: Call<List<ArtworkResponse>>, response: Response<List<ArtworkResponse>>) {
+                if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
+                    // Solo obtenemos las primeras 5 obras de arte
+                    artworksLiveData.value = response.body()?.take(20)
+                } else {
+                    Log.e("ArtworkService", "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<ArtworkResponse>>, t: Throwable) {
+                Log.e("ArtworkService", "Failure: ${t.message}")
+                artworksLiveData.value = emptyList() // Lista vacía en caso de error
+            }
+        })
+
+        return artworksLiveData
     }
 }
 
