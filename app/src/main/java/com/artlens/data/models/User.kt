@@ -12,6 +12,10 @@ data class UserFields(
     val password: String
 )
 
+data class UserAuth(
+    val userName: String,
+    val password: String
+)
 
 sealed class CreateUserResponse {
     data class Success(val user: UserResponse) : CreateUserResponse()

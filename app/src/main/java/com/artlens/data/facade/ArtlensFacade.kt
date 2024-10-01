@@ -16,4 +16,5 @@ interface ArtlensFacade {
     fun getMuseumDetail(museumId: Int): LiveData<MuseumResponse>
     fun getAllMuseums(): LiveData<List<MuseumResponse>>
     fun createUser(email: String, userName: String, name: String, password: String): LiveData<CreateUserResponse>
+    fun authenticateUser(userName: String, password: String): LiveData<CreateUserResponse>
 }

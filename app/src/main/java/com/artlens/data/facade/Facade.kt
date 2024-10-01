@@ -47,4 +47,8 @@ class Facade(
     override fun createUser(email: String, userName: String, name: String, password: String): MutableLiveData<CreateUserResponse> {
         return userService.createUser(email, userName, name, password)
     }
+
+    override fun authenticateUser(userName: String, password: String): MutableLiveData<CreateUserResponse> {
+        return userService.authenticateUser(userName, password)
+    }
 }

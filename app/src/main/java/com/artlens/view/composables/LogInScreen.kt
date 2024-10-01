@@ -26,6 +26,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,18 +42,46 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
 import com.artlens.R
+import com.artlens.data.models.CreateUserResponse
 
 @Composable
 fun LogInScreen(
     onBackClick: () -> Unit,
     onCreateAccount: () -> Unit,
-    onLogInClick: () -> Unit,
+    onLogInClick: (String, String) -> Unit,
+    userResponse: LiveData<CreateUserResponse>
 ) {
 
     var pass by remember { mutableStateOf("") }
     var user by remember { mutableStateOf("")}
+    var feedbackMessage by remember { mutableStateOf("") }
+    var isFeedbackVisible by remember { mutableStateOf(false) }
 
+    val response by userResponse.observeAsState()
+
+    // Check the response and show feedback
+    response?.let {
+        when (it) {
+            is CreateUserResponse.Success -> {
+                feedbackMessage = "Account authenticated successfully!"
+                isFeedbackVisible = true
+            }
+            is CreateUserResponse.Failure -> {
+                feedbackMessage = it.error
+                isFeedbackVisible = true
+            }
+        }
+    }
+
+    // Feedback Dialog
+    if (isFeedbackVisible) {
+        FeedbackDialog(
+            message = feedbackMessage,
+            onDismiss = onBackClick  // Close the dialog
+        )
+    }
 
     Box(
         modifier = Modifier
@@ -166,7 +195,7 @@ fun LogInScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = onLogInClick,
+                onClick = {onLogInClick(user, pass)},
                 shape = RoundedCornerShape(22.dp),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Black,   // Button background color
@@ -235,13 +264,4 @@ fun LogInScreen(
     }
 }
 
-@Preview
-@Composable
-fun PreviewLogInScreen() {
-    LogInScreen(
-        onCreateAccount = {},
-        onBackClick = {},
-        onLogInClick = {}
-    )
-}
 
