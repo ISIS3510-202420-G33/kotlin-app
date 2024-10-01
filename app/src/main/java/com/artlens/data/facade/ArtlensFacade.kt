@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.artlens.data.models.ArtistResponse
 import com.artlens.data.models.ArtworkResponse
+import com.artlens.data.models.CommentResponse
 import com.artlens.data.models.CreateUserResponse
 import com.artlens.data.models.MuseumResponse
 import com.artlens.data.models.UserResponse
@@ -27,4 +28,12 @@ interface ArtlensFacade {
     fun createUser(email: String, userName: String, name: String, password: String): LiveData<CreateUserResponse>
     fun authenticateUser(userName: String, password: String): LiveData<CreateUserResponse>
 
+    // Likes API
+    fun postLikeByUser(userId: Int, artworkId: Int): LiveData<Boolean>
+    fun getLikesByUser(userId: Int): LiveData<List<ArtworkResponse>>
+    fun deleteLikeByUser(userId: Int, artworkId: Int): LiveData<Boolean>
+
+    //Comments
+    fun postComment(content: String, date: String, artworkId: Int, userId: Int): LiveData<Boolean>
+    fun getCommentsByArtwork(artworkId: Int): LiveData<List<CommentResponse>>
 }

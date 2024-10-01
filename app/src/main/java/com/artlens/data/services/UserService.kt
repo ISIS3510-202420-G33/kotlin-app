@@ -3,7 +3,9 @@ package com.artlens.data.services
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.artlens.data.api.UserApi
+import com.artlens.data.models.ArtworkResponse
 import com.artlens.data.models.CreateUserResponse
+import com.artlens.data.models.LikeRequest
 import com.artlens.data.models.UserAuth
 import com.artlens.data.models.UserFields
 import com.artlens.data.models.UserResponse
@@ -94,6 +96,78 @@ class UserService(private val userApi: UserApi) {
 
     }
 
+    fun postLikeByUser(userId: Int, artworkId: Int): MutableLiveData<Boolean> {
+        val likeLiveData = MutableLiveData<Boolean>()
+        val likeRequest = LikeRequest(userId, artworkId)
 
+        userApi.postLikeByUser(likeRequest).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("UserService", "Like added successfully")
+                    likeLiveData.value = true // Indica éxito
+                } else {
+                    Log.e("UserService", "Error adding like: ${response.code()}")
+                    likeLiveData.value = false // Indica fallo
+                }
+            }
 
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("UserService", "Failure adding like: ${t.message}")
+                likeLiveData.value = false
+            }
+        })
+
+        return likeLiveData
+    }
+
+    fun getLikesByUser(userId: Int): MutableLiveData<List<ArtworkResponse>> {
+        val likedArtworksLiveData = MutableLiveData<List<ArtworkResponse>>()
+
+        userApi.getLikesByUser(userId).enqueue(object : Callback<List<ArtworkResponse>> {
+            override fun onResponse(call: Call<List<ArtworkResponse>>, response: Response<List<ArtworkResponse>>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { likedArtworks ->
+                        Log.d("UserService", "Fetched liked artworks: $likedArtworks")
+                        likedArtworksLiveData.value = likedArtworks // Lista de obras que le gustan al usuario
+                    } ?: run {
+                        Log.e("UserService", "Empty response for liked artworks")
+                        likedArtworksLiveData.value = emptyList() // En caso de que no haya obras
+                    }
+                } else {
+                    Log.e("UserService", "Error fetching liked artworks: ${response.code()}")
+                    likedArtworksLiveData.value = emptyList() // Manejo de error
+                }
+            }
+
+            override fun onFailure(call: Call<List<ArtworkResponse>>, t: Throwable) {
+                Log.e("UserService", "Failure fetching liked artworks: ${t.message}")
+                likedArtworksLiveData.value = emptyList()
+            }
+        })
+
+        return likedArtworksLiveData
+    }
+
+    fun deleteLikeByUser(userId: Int, artworkId: Int): MutableLiveData<Boolean> {
+        val unlikeLiveData = MutableLiveData<Boolean>()
+
+        userApi.deleteLikeByUser(userId, artworkId).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("UserService", "Like removed successfully")
+                    unlikeLiveData.value = true // Indica éxito
+                } else {
+                    Log.e("UserService", "Error removing like: ${response.code()}")
+                    unlikeLiveData.value = false // Indica fallo
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("UserService", "Failure removing like: ${t.message}")
+                unlikeLiveData.value = false
+            }
+        })
+
+        return unlikeLiveData
+    }
 }

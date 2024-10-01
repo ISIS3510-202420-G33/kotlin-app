@@ -21,3 +21,8 @@ sealed class CreateUserResponse {
     data class Success(val user: UserResponse) : CreateUserResponse()
     data class Failure(val error: String) : CreateUserResponse()
 }
+
+data class LikeRequest(
+    val userId: Int,
+    val artworkId: Int
+)
