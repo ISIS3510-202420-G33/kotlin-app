@@ -30,7 +30,7 @@ import com.bumptech.glide.request.RequestOptions
 fun ArtworkDetailScreen(
     artwork: ArtworkResponse?,
     onBackClick: () -> Unit,
-    onMoreInfoClick: () -> Unit
+    onMoreInfoClick: (Int) -> Unit
 ) {
     val context = LocalContext.current
     var newComment by remember { mutableStateOf("") }
@@ -84,6 +84,21 @@ fun ArtworkDetailScreen(
                         painter = painterResource(id = R.drawable.profile),
                         contentDescription = "Profile Icon",
                         modifier = Modifier.size(30.dp)
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp), // Espacio debajo de la barra superior
+                horizontalArrangement = Arrangement.End // Alineamos el contenido a la derecha
+            ) {
+                IconButton(onClick = { /* Acción de estrella */ }) {
+                    Image(
+                        painter = painterResource(id = R.drawable.star),
+                        contentDescription = "Star Icon",
+                        modifier = Modifier.size(40.dp) // Tamaño del icono
                     )
                 }
             }
@@ -142,7 +157,7 @@ fun ArtworkDetailScreen(
 
                 // Botón de ver más detalles
                 Button(
-                    onClick = onMoreInfoClick,
+                    onClick = { onMoreInfoClick(it.fields.artist) }, // Pasa el ID del artista
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.Black,

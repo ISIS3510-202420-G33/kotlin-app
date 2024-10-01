@@ -2,9 +2,11 @@ package com.artlens.view.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -24,12 +26,14 @@ import com.artlens.R
 @Composable
 fun MainScreen(
     imageUrls: List<String>,  // Recibe las imágenes del backend
+    museumIds: List<Int>,  // Lista de IDs de museos para redirigir a los detalles
     onMapClick: () -> Unit,
-    onMuseumClick: () -> Unit,
+    onMuseumClick: (Int) -> Unit,  // Recibe el ID del museo clicado
     onRecommendationClick: () -> Unit,
     onBackClick: () -> Unit,
     onUserClick: () -> Unit,
     onCameraClick: () -> Unit
+    onMuseumsClick: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -88,15 +92,25 @@ fun MainScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(70.dp))
 
-            // Carrusel de imágenes con URLs del backend
-            MuseumImageCarousel(imageUrls)  // Usa la función renombrada
+            // Título centrado
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = "Museums in your city",
+                    fontSize = 20.sp,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Carrusel de imágenes con URLs e IDs del backend
+            MuseumImageCarousel(imageUrls = imageUrls, onMuseumClick = onMuseumClick, museumIds = museumIds)
 
             // Botones de acción
             Spacer(modifier = Modifier.height(150.dp))
             Button(
-                onClick = onMuseumClick,
+                onClick = { onMuseumsClick() },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Black,
@@ -169,22 +183,27 @@ fun MainScreen(
     }
 }
 
+
 @Composable
-fun MuseumImageCarousel(imageUrls: List<String>) {  // Función para mostrar el carrusel
+fun MuseumImageCarousel(imageUrls: List<String>, onMuseumClick: (Int) -> Unit, museumIds: List<Int>) {
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
     ) {
-        items(imageUrls) { imageUrl ->
+        itemsIndexed(imageUrls) { index, imageUrl ->  // Usamos itemsIndexed para obtener el índice
             Image(
                 painter = rememberImagePainter(data = imageUrl),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(8.dp)
-                    .width(300.dp)
-                    .height(200.dp)
-                    .clip(CircleShape),
+                    .width(310.dp)
+                    .height(500.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        // Al hacer clic, redirigimos al detalle del museo correspondiente
+                        onMuseumClick(museumIds[index])
+                    },
                 contentScale = ContentScale.Crop
             )
         }

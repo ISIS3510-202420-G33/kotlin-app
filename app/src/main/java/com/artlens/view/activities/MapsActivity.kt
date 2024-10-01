@@ -136,11 +136,18 @@ class MapsActivity : ComponentActivity() {
                 .fillMaxHeight()
                 .padding(top = 80.dp),  // Ajustar la altura para dejar espacio a la barra superior
             cameraPositionState = cameraPositionState,
-            properties = MapProperties(isMyLocationEnabled = ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED)
-        ) {
+            uiSettings = MapUiSettings(
+                tiltGesturesEnabled = false // Desactivar el gesto de inclinación
+            ),
+            properties = MapProperties(
+                isMyLocationEnabled = ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED,
+                mapType = MapType.NORMAL
+            )
+        )
+        {
             // Solo mostramos los 5 museos más cercanos
             museums.forEach { museum ->
                 val museumLocation = LatLng(museum.fields.latitude, museum.fields.longitude)
