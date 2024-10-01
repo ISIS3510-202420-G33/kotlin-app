@@ -11,8 +11,8 @@ import com.artlens.view.composables.MainScreen
 import com.artlens.view.viewmodels.MuseumsListViewModel
 import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.facade.ViewModelFactory
+import com.artlens.utils.UserPreferences
 import com.artlens.view.activities.MuseumsDetailActivity
-
 
 class MainActivity : ComponentActivity() {
 
@@ -55,6 +55,31 @@ class MainActivity : ComponentActivity() {
                 },
                 onBackClick = {
                     // No hacer nada cuando se presiona la flecha de retroceso
+                },
+
+                onCameraClick = {
+
+                    val intent = Intent(this, qrCodeActivity::class.java)
+                    startActivity(intent)
+
+                },
+
+                onUserClick = {
+
+
+                    val pk = UserPreferences.getPk()
+
+                    if(pk!!>=0) {
+
+                        //Poner Lista de likeados
+
+                    }
+                    else{
+
+                        val intent = Intent(this, LogInActivity::class.java)
+                        startActivity(intent)
+
+                    }
                 }
             )
         }

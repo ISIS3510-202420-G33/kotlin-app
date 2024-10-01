@@ -31,6 +31,8 @@ fun MainScreen(
     onMuseumClick: (Int) -> Unit,  // Recibe el ID del museo clicado
     onRecommendationClick: () -> Unit,
     onBackClick: () -> Unit,
+    onUserClick: () -> Unit,
+    onCameraClick: () -> Unit
     onMuseumsClick: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -65,7 +67,7 @@ fun MainScreen(
                 )
 
                 // Icono de perfil a la derecha
-                IconButton(onClick = { /* Acción para abrir el perfil */ }) {
+                IconButton(onClick = onUserClick) {
                     Image(
                         painter = painterResource(id = R.drawable.profile),
                         contentDescription = "Profile Icon",
@@ -162,7 +164,7 @@ fun MainScreen(
                 )
             }
 
-            IconButton(onClick = { /* Acción para ir a Museos */ }) {
+            IconButton(onClick = onCameraClick) {
                 Image(
                     painter = painterResource(id = R.drawable.camera),
                     contentDescription = "Museos",
