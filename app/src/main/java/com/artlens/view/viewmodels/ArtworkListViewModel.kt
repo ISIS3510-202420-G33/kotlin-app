@@ -44,6 +44,8 @@ class ArtworkListViewModel(private val facade: ArtlensFacade) : ViewModel() {
             }
         }
     }
+
+    /*
     fun likeArtwork(userId: Int, artworkId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             facade.likeArtwork(userId, artworkId)  // Pass the userId
@@ -65,7 +67,5 @@ class ArtworkListViewModel(private val facade: ArtlensFacade) : ViewModel() {
             val likedArtworks = facade.getLikedArtworks(userId) // Ensure this method takes userId
             _likedArtworks.postValue(likedArtworks.value)
         }
-    }
-
-
+    }*/
 }

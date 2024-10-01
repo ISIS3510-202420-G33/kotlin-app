@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.artlens.R
+import com.artlens.data.models.ArtworkResponse
 import com.artlens.view.viewmodels.ArtworkListViewModel
 
 @Composable
@@ -76,7 +77,7 @@ fun LikesScreen(
                         artwork = artwork,
                         onArtworkClick = { onArtworkClick(artwork.pk) },
                         onRemoveLikeClick = {
-                            artworkListViewModel.removeLike(artwork.pk)  // Remove like from ViewModel
+                           /* artworkListViewModel.removeLike(artwork.pk) */ // Remove like from ViewModel
                         }
                     )
                 }
@@ -123,13 +124,13 @@ fun LikedArtworkCard(
             }
 
             // Remove Like Button (Trash Icon)
-            IconButton(onClick = onRemoveLikeClick) {
+            /*IconButton(onClick = onRemoveLikeClick) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_trash),  // Assume you have a trash icon in drawables
                     contentDescription = "Remove Like",
                     modifier = Modifier.size(30.dp)
                 )
-            }
+            }*/
         }
     }
 }

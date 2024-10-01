@@ -33,7 +33,7 @@ class LikesActivity : ComponentActivity() {
             )
 
             // Fetch liked artworks when the screen loads
-            artworkListViewModel.fetchLikedArtworks()
+            /*artworkListViewModel.fetchLikedArtworks()*/
         }
     }
 }

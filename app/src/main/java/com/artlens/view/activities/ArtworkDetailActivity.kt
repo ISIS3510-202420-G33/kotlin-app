@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.facade.ViewModelFactory
+import com.artlens.data.models.ArtworkResponse
 import com.artlens.view.viewmodels.ArtworkViewModel
 import com.artlens.view.composables.ArtworkDetailScreen
 
@@ -40,16 +41,15 @@ class ArtworkDetailActivity : ComponentActivity() {
 
             ) {
                 // Mostrar la pantalla de detalle de la obra
-                ArtworkDetailScreen(
-                    artwork = artworkState,
+               /* ArtworkDetailScreen(
                     onBackClick = { onBackPressed() },  // Aquí pasamos la acción de "Atrás"
                     onMoreInfoClick = { artistId ->  // Aquí se recibe el artistId
                         // Lanza la actividad de detalles del artista
-                        val intent = Intent(this, ArtistDetailActivity::class.java)
+                        val intent = Intent(this, ArtworkDetailActivity::class.java)
                         intent.putExtra("ARTIST_ID", artistId)
                         startActivity(intent)
                     }
-                )
+                )*/
 
                 // Llamar al ViewModel para obtener los detalles de la obra
                 LaunchedEffect(Unit) {
@@ -57,5 +57,9 @@ class ArtworkDetailActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun ArtworkDetailScreen(artwork: ArtworkResponse?, onBackClick: () -> Unit, onMoreInfoClick: (Int) -> Unit) {
+
     }
 }
