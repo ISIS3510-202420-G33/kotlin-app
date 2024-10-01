@@ -45,6 +45,11 @@ class MainActivity : ComponentActivity() {
                 },
                 onBackClick = {
                     // No hacer nada cuando se presiona la flecha de retroceso
+                },
+
+                onUserClick = {
+                    val intent = Intent(this, LogInActivity::class.java)
+                    startActivity(intent)
                 }
             )
         }

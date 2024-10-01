@@ -77,6 +77,20 @@
         </activity>
 
         <activity
+            android:name=".view.activities.LogInActivity"
+            android:exported="true"
+            android:label="login"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".view.activities.CreateAccountActivity"
+            android:exported="true"
+            android:label="create"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        </activity>
+
+        <activity
             android:name=".view.activities.RecommendationsActivity"
             android:exported="true"
             android:label="Recommendations" />

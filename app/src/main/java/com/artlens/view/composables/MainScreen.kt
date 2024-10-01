@@ -27,7 +27,8 @@ fun MainScreen(
     onMapClick: () -> Unit,
     onMuseumClick: () -> Unit,
     onRecommendationClick: () -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onUserClick: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -61,7 +62,7 @@ fun MainScreen(
                 )
 
                 // Icono de perfil a la derecha
-                IconButton(onClick = { /* Acción para abrir el perfil */ }) {
+                IconButton(onClick = onUserClick) {
                     Image(
                         painter = painterResource(id = R.drawable.profile),
                         contentDescription = "Profile Icon",
