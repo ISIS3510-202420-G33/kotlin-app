@@ -12,6 +12,12 @@ interface ArtworkApi {
 
     @GET("artworks/")
     fun getAllArtworks(): Call<List<ArtworkResponse>>
+
+    @GET("artworks/museum/{id}")
+    fun getArtworksByMuseum(@Path("id") id: Int): Call<List<ArtworkResponse>>
+
+    @GET("artworks/artist/{id}")
+    fun getArtworksByArtist(@Path("id") id: Int): Call<List<ArtworkResponse>>
 }
 
 

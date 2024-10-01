@@ -19,6 +19,7 @@ class Facade(
     private val userService: UserService
 ) : ArtlensFacade {
 
+    //ArtistService
     override fun getArtistDetail(artistId: Int): LiveData<ArtistResponse> {
         return artistService.getArtistDetail(artistId)
     }
@@ -27,15 +28,24 @@ class Facade(
         return artistService.getAllArtists()
     }
 
+    //ArtworkService
     override fun getArtworkDetail(artworkId: Int): LiveData<ArtworkResponse> {
         return artworkService.getArtworkDetail(artworkId)
     }
 
-    // Agregar la función para obtener todas las obras de arte
     override fun getAllArtworks(): LiveData<List<ArtworkResponse>> {
         return artworkService.getAllArtworks()
     }
 
+    override fun getArtworksByArtist(artistId: Int): LiveData<List<ArtworkResponse>> {
+        return artworkService.getArtworksByArtist(artistId)
+    }
+
+    override fun getArtworksByMuseum(museumId: Int): LiveData<List<ArtworkResponse>> {
+        return artworkService.getArtworksByMuseum(museumId)
+    }
+
+    //MuseumService
     override fun getMuseumDetail(museumId: Int): LiveData<MuseumResponse> {
         return museumService.getMuseumDetail(museumId)
     }
@@ -44,6 +54,8 @@ class Facade(
         return museumService.getAllMuseums()
     }
 
+
+    //UserService
     override fun createUser(email: String, userName: String, name: String, password: String): MutableLiveData<CreateUserResponse> {
         return userService.createUser(email, userName, name, password)
     }
@@ -51,4 +63,6 @@ class Facade(
     override fun authenticateUser(userName: String, password: String): MutableLiveData<CreateUserResponse> {
         return userService.authenticateUser(userName, password)
     }
+
+
 }

@@ -14,5 +14,4 @@ interface UserApi {
 
     @POST("/user/authenticate")
     fun authenticateUser(@Body user: UserAuth) : Call<List<UserResponse>>
-
 }

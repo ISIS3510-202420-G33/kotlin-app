@@ -54,5 +54,49 @@ class ArtworkService(private val artworkApi: ArtworkApi) {
 
         return artworksLiveData
     }
+
+    fun getArtworksByArtist(artistId: Int): LiveData<List<ArtworkResponse>> {
+        val artworksLiveData = MutableLiveData<List<ArtworkResponse>>()
+
+        artworkApi.getArtworksByArtist(artistId).enqueue(object : Callback<List<ArtworkResponse>> {
+            override fun onResponse(call: Call<List<ArtworkResponse>>, response: Response<List<ArtworkResponse>>) {
+                if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
+                    // Obtenemos las primeras 20 obras de arte del artista
+                    artworksLiveData.value = response.body()?.take(20)
+                } else {
+                    Log.e("ArtworkService", "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<ArtworkResponse>>, t: Throwable) {
+                Log.e("ArtworkService", "Failure: ${t.message}")
+                artworksLiveData.value = emptyList() // Lista vacía en caso de error
+            }
+        })
+
+        return artworksLiveData
+    }
+
+    fun getArtworksByMuseum(museumId: Int): LiveData<List<ArtworkResponse>> {
+        val artworksLiveData = MutableLiveData<List<ArtworkResponse>>()
+
+        artworkApi.getArtworksByMuseum(museumId).enqueue(object : Callback<List<ArtworkResponse>> {
+            override fun onResponse(call: Call<List<ArtworkResponse>>, response: Response<List<ArtworkResponse>>) {
+                if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
+                    // Obtenemos las primeras 20 obras de arte del museo
+                    artworksLiveData.value = response.body()?.take(20)
+                } else {
+                    Log.e("ArtworkService", "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<ArtworkResponse>>, t: Throwable) {
+                Log.e("ArtworkService", "Failure: ${t.message}")
+                artworksLiveData.value = emptyList() // Lista vacía en caso de error
+            }
+        })
+
+        return artworksLiveData
+    }
 }
 

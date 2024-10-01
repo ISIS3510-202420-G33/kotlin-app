@@ -49,6 +49,11 @@ class MainActivity : ComponentActivity() {
                     val intent = Intent(this, MuseumsListActivity::class.java)
                     startActivity(intent)
                 },
+                onArtistClick = {
+                    // Regresar a la lista de museos
+                    val intent = Intent(this, ArtistDetailActivity::class.java)
+                    startActivity(intent)
+                },
                 onRecommendationClick = {
                     val intent = Intent(this, RecommendationsActivity::class.java)
                     startActivity(intent)

@@ -1,6 +1,5 @@
 package com.artlens.network
 
-import com.artlens.data.api.ArtworkApi
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

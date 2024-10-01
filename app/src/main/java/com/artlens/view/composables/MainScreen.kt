@@ -30,9 +30,10 @@ fun MainScreen(
     onMapClick: () -> Unit,
     onMuseumClick: (Int) -> Unit,  // Recibe el ID del museo clicado
     onRecommendationClick: () -> Unit,
+    onArtistClick: () -> Unit,
     onBackClick: () -> Unit,
     onUserClick: () -> Unit,
-    onCameraClick: () -> Unit
+    onCameraClick: () -> Unit,
     onMuseumsClick: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -134,7 +135,7 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
             Button(
-                onClick = { /* Acción para ver artistas */ },
+                onClick =  onArtistClick,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Black,
