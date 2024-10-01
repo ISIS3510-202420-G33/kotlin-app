@@ -28,7 +28,8 @@ fun MainScreen(
     onMuseumClick: () -> Unit,
     onRecommendationClick: () -> Unit,
     onBackClick: () -> Unit,
-    onUserClick: () -> Unit
+    onUserClick: () -> Unit,
+    onCameraClick: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -149,7 +150,7 @@ fun MainScreen(
                 )
             }
 
-            IconButton(onClick = { /* Acción para ir a Museos */ }) {
+            IconButton(onClick = onCameraClick) {
                 Image(
                     painter = painterResource(id = R.drawable.camera),
                     contentDescription = "Museos",

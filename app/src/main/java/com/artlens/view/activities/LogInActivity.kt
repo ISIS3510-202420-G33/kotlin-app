@@ -5,13 +5,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.facade.ViewModelFactory
 import com.artlens.view.composables.LogInScreen
-import com.artlens.view.composables.MuseumsListScreen
-import com.artlens.view.viewmodels.CreateAccountViewModel
 import com.artlens.view.viewmodels.LogInViewModel
 
 class LogInActivity : ComponentActivity() {

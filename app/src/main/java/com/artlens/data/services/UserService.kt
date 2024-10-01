@@ -7,6 +7,7 @@ import com.artlens.data.models.CreateUserResponse
 import com.artlens.data.models.UserAuth
 import com.artlens.data.models.UserFields
 import com.artlens.data.models.UserResponse
+import com.artlens.utils.UserPreferences
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Call
@@ -63,6 +64,11 @@ class UserService(private val userApi: UserApi) {
                             val authorizedUser = userResponseList[0] // Get the first user from the list
                             Log.d("UserService", "User Authenticated: $authorizedUser")
                             userLiveData.value = CreateUserResponse.Success(authorizedUser)
+
+                            //save Info
+                            UserPreferences.saveUser(pk = authorizedUser.pk, username = authorizedUser.fields.userName, email = authorizedUser.fields.email)
+
+
                         } else {
                             userLiveData.value = CreateUserResponse.Failure("Authentication error")
                         }

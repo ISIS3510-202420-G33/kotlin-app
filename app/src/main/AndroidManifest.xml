@@ -12,6 +12,7 @@
     <uses-feature android:name="android.hardware.camera" android:required="true" />
 
     <application
+        android:name=".ArtLensApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -85,6 +86,13 @@
 
         <activity
             android:name=".view.activities.CreateAccountActivity"
+            android:exported="true"
+            android:label="create"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".view.activities.qrCodeActivity"
             android:exported="true"
             android:label="create"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">

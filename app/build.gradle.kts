@@ -97,4 +97,10 @@ dependencies {
     // Para depuración de Compose
     debugImplementation("androidx.compose.ui:ui-tooling:1.5.0")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.0")
+
+    //Para QR
+    implementation ("com.google.mlkit:barcode-scanning:17.0.3")
+    implementation ("androidx.camera:camera-camera2:1.1.0-alpha05")
+    implementation ("androidx.camera:camera-lifecycle:1.1.0-alpha05")
+    implementation ("androidx.camera:camera-view:1.0.0-alpha28")
 }
