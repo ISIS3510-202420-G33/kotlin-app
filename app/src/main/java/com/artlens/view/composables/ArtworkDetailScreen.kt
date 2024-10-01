@@ -30,6 +30,8 @@ import com.bumptech.glide.request.RequestOptions
 fun ArtworkDetailScreen(
     artwork: ArtworkResponse?,
     onBackClick: () -> Unit,
+    isLiked: Boolean,
+    onLikeClick: () -> Unit,
     onMoreInfoClick: (Int) -> Unit
 ) {
     val context = LocalContext.current
@@ -94,11 +96,12 @@ fun ArtworkDetailScreen(
                     .padding(top = 8.dp), // Espacio debajo de la barra superior
                 horizontalArrangement = Arrangement.End // Alineamos el contenido a la derecha
             ) {
-                IconButton(onClick = { /* Acción de estrella */ }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.star),
-                        contentDescription = "Star Icon",
-                        modifier = Modifier.size(40.dp) // Tamaño del icono
+                IconButton(onClick = onLikeClick) {
+                    Icon(
+                        painter = if (isLiked) painterResource(id = R.drawable.star)
+                        else painterResource(id = R.drawable.star),
+                        contentDescription = "Like Artwork",
+                        modifier = Modifier.size(30.dp)
                     )
                 }
             }

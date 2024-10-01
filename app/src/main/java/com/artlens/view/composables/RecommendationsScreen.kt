@@ -75,7 +75,7 @@ fun RecommendationsScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(artworks.take(5)) { artwork ->  // Solo muestra las primeras 5 obras
+                items(artworks.take(10)) { artwork ->  // Solo muestra las primeras 5 obras
                     RecommendationCard(
                         recommendation = Recommendation(
                             title = artwork.fields.name,

@@ -3,7 +3,12 @@ package com.artlens.view.composables
 import android.widget.ImageView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -13,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -21,15 +27,17 @@ import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.rememberImagePainter
 import com.artlens.R
 import com.artlens.data.models.ArtistResponse
+import com.artlens.data.models.ArtworkResponse
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
 @Composable
 fun ArtistDetailScreen(
     artist: ArtistResponse?,
+    artworks: List<ArtworkResponse>,
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
-    onRecommendationClick: () -> Unit
+    onArtworkClick: (Int) -> Unit  // Callback para manejar los clics en las obras de arte
 ) {
     val context = LocalContext.current
 
@@ -38,6 +46,7 @@ fun ArtistDetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
+                .verticalScroll(rememberScrollState())  // Hacemos que la vista sea scrolleable
         ) {
             // Barra superior con flecha atrás y el título del artista
             Row(
@@ -58,7 +67,7 @@ fun ArtistDetailScreen(
 
                 // Título centrado
                 Text(
-                    text =  "ARTIST",
+                    text = "ARTIST",
                     fontSize = 24.sp,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                 )
@@ -112,6 +121,15 @@ fun ArtistDetailScreen(
             } ?: run {
                 Text(text = "Artist not found", style = MaterialTheme.typography.body1)
             }
+
+            // Carrusel de obras de arte del artista
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(text = "Artworks by this artist", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, fontSize = 20.sp)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Carrusel de imágenes de obras de arte
+            ArtworkCarousel(artworks = artworks, onArtworkClick = onArtworkClick)
+            Spacer(modifier = Modifier.height(44.dp))
         }
 
         // Barra de navegación inferior
@@ -141,13 +159,36 @@ fun ArtistDetailScreen(
                 )
             }
 
-            IconButton(onClick = onRecommendationClick) {
+            IconButton(onClick = { /* Acción para ir a Recomendaciones */ }) {
                 Image(
                     painter = painterResource(id = R.drawable.fire),
                     contentDescription = "Recommendations",
                     modifier = Modifier.size(30.dp)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun ArtworkCarousel(artworks: List<ArtworkResponse>, onArtworkClick: (Int) -> Unit) {
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+    ) {
+        items(artworks.take(5)) { artwork ->
+            Image(
+                painter = rememberImagePainter(data = artwork.fields.image),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .width(300.dp)
+                    .height(200.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .clickable { onArtworkClick(artwork.pk) },  // Al hacer clic, navega a los detalles de la obra
+                contentScale = ContentScale.Crop
+            )
         }
     }
 }

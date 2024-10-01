@@ -21,6 +21,7 @@ import com.artlens.data.models.MuseumResponse
 @Composable
 fun MuseumDetailScreen(
     museum: MuseumResponse?,
+    artworkUrls: List<String>, // Añadir las URLs de las obras de arte
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit
 ) {
@@ -85,13 +86,9 @@ fun MuseumDetailScreen(
                 // Carrusel de imágenes de "highlighted artworks"
                 Text(text = "Highlighted Artworks", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, fontSize = 20.sp)
                 Spacer(modifier = Modifier.height(16.dp))
-                ImageArtCarousel(
-                    imageUrls = listOf(
-                        "https://th.bing.com/th/id/R.acf698c2cee6cc0847f46ab6f997dae5?rik=7BbDKY96cEdGBw&pid=ImgRaw&r=0",
-                        "https://th.bing.com/th/id/R.acf698c2cee6cc0847f46ab6f997dae5?rik=7BbDKY96cEdGBw&pid=ImgRaw&r=0",
-                        "https://th.bing.com/th/id/R.acf698c2cee6cc0847f46ab6f997dae5?rik=7BbDKY96cEdGBw&pid=ImgRaw&r=0"
-                    )
-                )
+
+                // Mostrar las obras de arte en el carrusel
+                ImageArtCarousel(imageUrls = artworkUrls)
             } ?: run {
                 Text(text = "Museum not found", style = MaterialTheme.typography.body1)
             }
@@ -134,6 +131,7 @@ fun MuseumDetailScreen(
         }
     }
 }
+
 
 @Composable
 fun ImageArtCarousel(imageUrls: List<String>) {
