@@ -99,6 +99,7 @@ fun ArtworkDetailScreen(
                 }
             }
 
+            // Fila para la estrella de "like"
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -107,9 +108,10 @@ fun ArtworkDetailScreen(
             ) {
                 IconButton(onClick = onLikeClick) {
                     Icon(
-                        painter = if (isLiked) painterResource(id = R.drawable.star)
-                        else painterResource(id = R.drawable.star),
+                        imageVector = if (isLiked) Icons.Filled.Star else Icons.Outlined.StarBorder,
                         contentDescription = "Like Artwork",
+                        // Usar el color personalizado cuando isLiked es true
+                        tint = if (isLiked) likedColor else Color.Gray,
                         modifier = Modifier.size(30.dp)
                     )
                 }
@@ -124,8 +126,6 @@ fun ArtworkDetailScreen(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-
-
 
                 // Imagen de la obra
                 AndroidView(
@@ -142,15 +142,20 @@ fun ArtworkDetailScreen(
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
+
                 // Artista y Técnica
                 Text(text = "Artist: ${it.fields.name}", style = MaterialTheme.typography.body1)
                 Text(text = "Technique: ${it.fields.technique}", style = MaterialTheme.typography.body1)
 
-
                 // Interpretación
-                Text(text = "Interpretations: ${it.fields.interpretation}", style = MaterialTheme.typography.body1)
                 Text(
-                    text = "Advance Information: ${it.fields.advancedInfo}", style = MaterialTheme.typography.body1)
+                    text = "Interpretations: ${it.fields.interpretation}",
+                    style = MaterialTheme.typography.body1
+                )
+                Text(
+                    text = "Advance Information: ${it.fields.advancedInfo}",
+                    style = MaterialTheme.typography.body1
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -190,7 +195,10 @@ fun ArtworkDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     comments.forEach { comment ->
-                        ForumEntry(userName = comment.split(":")[0], comment = comment.split(":")[1])
+                        ForumEntry(
+                            userName = comment.substringBefore(":"),
+                            comment = comment.substringAfter(":")
+                        )
                     }
 
                     // Campo para agregar nuevo comentario
@@ -255,11 +263,10 @@ fun ArtworkDetailScreen(
 fun ForumEntry(userName: String, comment: String) {
     Column {
         Text(text = userName, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-        TextField(
-            value = comment,
-            onValueChange = { /* Solo lectura */ },
-            modifier = Modifier.fillMaxWidth(),
-            readOnly = true
+        Text(
+            text = comment,
+            style = MaterialTheme.typography.body2,
+            modifier = Modifier.padding(start = 8.dp)
         )
         Divider(color = Color.Black, thickness = 1.dp)
     }
