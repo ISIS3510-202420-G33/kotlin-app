@@ -1,4 +1,3 @@
-// Archivo: ArtworkDetailScreen.kt
 package com.artlens.view.composables
 
 import android.widget.ImageView
@@ -16,9 +15,7 @@ import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-// Importación necesaria para utilizar Color
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,7 +34,8 @@ fun ArtworkDetailScreen(
     isLiked: Boolean,
     onBackClick: () -> Unit,
     onLikeClick: () -> Unit,
-    onMoreInfoClick: (Int) -> Unit
+    onMoreInfoClick: (Int) -> Unit,
+    onInterpretationSpeakClick: (String) -> Unit // Añadimos el parámetro para TTS
 ) {
     val context = LocalContext.current
 
@@ -103,14 +101,13 @@ fun ArtworkDetailScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp), // Espacio debajo de la barra superior
-                horizontalArrangement = Arrangement.End // Alineamos el contenido a la derecha
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.End
             ) {
                 IconButton(onClick = onLikeClick) {
                     Icon(
                         imageVector = if (isLiked) Icons.Filled.Star else Icons.Outlined.StarBorder,
                         contentDescription = "Like Artwork",
-                        // Usar el color personalizado cuando isLiked es true
                         tint = if (isLiked) likedColor else Color.Gray,
                         modifier = Modifier.size(30.dp)
                     )
@@ -132,11 +129,11 @@ fun ArtworkDetailScreen(
                     factory = { ImageView(context) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(250.dp), // Redimensionamos para que no se corte
+                        .height(250.dp),
                     update = { imageView ->
                         Glide.with(context)
                             .load(it.fields.image)
-                            .apply(RequestOptions().centerInside()) // Ajustamos el tamaño sin cortar la imagen
+                            .apply(RequestOptions().centerInside())
                             .into(imageView)
                     }
                 )
@@ -152,20 +149,25 @@ fun ArtworkDetailScreen(
                     text = "Interpretations: ${it.fields.interpretation}",
                     style = MaterialTheme.typography.body1
                 )
-                Text(
+
+                /*Text(
                     text = "Advance Information: ${it.fields.advancedInfo}",
                     style = MaterialTheme.typography.body1
-                )
+                )*/
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Ícono de audio y su descripción
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.headphones),
-                        contentDescription = "Audio",
-                        modifier = Modifier.size(40.dp)
-                    )
+                    IconButton(onClick = {
+                        onInterpretationSpeakClick(it.fields.interpretation) // Conectamos el click con TTS
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.headphones),
+                            contentDescription = "Audio",
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "Click the icon to start the audio narration.")
                 }
@@ -174,7 +176,7 @@ fun ArtworkDetailScreen(
 
                 // Botón de ver más detalles
                 Button(
-                    onClick = { onMoreInfoClick(it.fields.artist) }, // Pasa el ID del artista
+                    onClick = { onMoreInfoClick(it.fields.artist) },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.Black,
