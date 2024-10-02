@@ -40,9 +40,7 @@ class MuseumsDetailActivity : ComponentActivity() {
                 museum = museumState,
                 artworkUrls = artworkUrls,  // Pasamos las URLs al carrusel
                 onBackClick = {
-                    // Regresar a la lista de museos
-                    val intent = Intent(this, MuseumsListActivity::class.java)
-                    startActivity(intent)
+                    onBackPressed()
                 },
                 onHomeClick = {
                     // Ir a la MainActivity

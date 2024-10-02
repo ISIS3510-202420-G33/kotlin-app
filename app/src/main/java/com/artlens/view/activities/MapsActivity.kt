@@ -136,6 +136,30 @@ class MapsActivity : ComponentActivity() {
                     .align(Alignment.CenterStart)
                     .padding(start = 16.dp)
             ) {
+
+                // Flecha de retroceso a la izquierda
+                IconButton(
+                    onClick = {
+                        onBackPressed()
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterStart) // Alinear a la izquierda
+                        .padding(start = 16.dp) // Añadir padding opcional
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.arrow),
+                        contentDescription = "Back Arrow",
+                        modifier = Modifier.size(30.dp)  // Tamaño ajustado de la flecha
+                    )
+                }
+
+                // Título centrado
+                Text(
+                    text = "Map of Museums",  // Título centrado de la barra
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Center) // Alineación centrada en el Box
+
                 Image(
                     painter = painterResource(id = R.drawable.arrow),
                     contentDescription = "Back Arrow",

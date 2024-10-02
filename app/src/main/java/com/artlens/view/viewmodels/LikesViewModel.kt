@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.artlens.data.facade.ArtlensFacade
 import com.artlens.data.models.ArtworkResponse
+import com.artlens.utils.UserPreferences
 
 class LikesViewModel(private val facade: ArtlensFacade) : ViewModel() {
     private val _likedMuseums = MutableLiveData<List<ArtworkResponse>>()
@@ -22,9 +23,14 @@ class LikesViewModel(private val facade: ArtlensFacade) : ViewModel() {
     }
 
     fun removeLike(artworkId: Int) {
-        facade.deleteLikeByUser(userId = 1, artworkId).observeForever { success ->
-            if (success) {
-                fetchLikedMuseums(userId = 1) // Refresca la lista después de borrar un like
+
+        val user = UserPreferences.getPk()
+
+        if (user != null) {
+            facade.deleteLikeByUser(userId = user, artworkId).observeForever { success ->
+                if (success) {
+                    fetchLikedMuseums(userId = user) // Refresca la lista después de borrar un like
+                }
             }
         }
     }

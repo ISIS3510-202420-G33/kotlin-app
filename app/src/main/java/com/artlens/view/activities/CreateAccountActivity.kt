@@ -27,7 +27,7 @@ class CreateAccountActivity : ComponentActivity() {
 
         setContent {
             CreateAccountScreen(
-                onBackClick = {navigateToLogIn()},
+                onBackClick = {onBackPressed()},
                 onHomeClick = {navigateToMainActivity()},
                 onRecommendationClick = {navigateToRecommendations()},
                 onCreateAccount = {email, userName, name, password ->
@@ -41,23 +41,6 @@ class CreateAccountActivity : ComponentActivity() {
     private fun createUser(email: String, userName: String, name: String, password: String) {
 
         createAccountViewModel.createUser(email, userName, name, password)
-        val db = Firebase.firestore
-
-        // Create a new user with a first, middle, and last name
-        val user = hashMapOf(
-            "Funcionalidad" to "Fun5",
-            "Fecha" to Timestamp.now()
-        )
-
-        // Add a new document with a generated ID
-        db.collection("BQ33")
-            .add(user)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
 
     }
 

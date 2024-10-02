@@ -24,37 +24,35 @@ class qrCodeActivity : ComponentActivity() {
 
         setContent {
             var qrCodeValue by remember { mutableStateOf("") }
-
-            val db = Firebase.firestore
-
-            // Create a new user with a first, middle, and last name
-            val user = hashMapOf(
-                "Funcionalidad" to "Fun1",
-                "Fecha" to Timestamp.now()
-            )
-
-            // Add a new document with a generated ID
-            db.collection("BQ33")
-                .add(user)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error adding document", e)
-                }
+            var showDialog by remember { mutableStateOf(false) }
 
             QRCodeScanner(
-                onBackClick = {navigateToMainActivity()},
+                onBackClick = {onBackPressed()},
                 onHomeClick = {navigateToMainActivity()},
                 onRecommendationClick = {navigateToRecommendations()},
-                onUSerClick = {navigateUser()},
+                onUSerClick = {
+                    val pk = UserPreferences.getPk()
+                    if(pk!!>=0) {
+                        showDialog = true
+                    }
+                    else{
+                        val intent = Intent(this, LogInActivity::class.java)
+                        startActivity(intent)
+                    }},
                 onQRCodeScanned = { qrCode ->
                     qrCodeValue = qrCode
+                },
+                showDialog = showDialog,
+                onDismissDialog = { showDialog = false },
+                logOutClick = {UserPreferences.clearUserData()},
+                onViewFavoritesClick = {
+                    val intent = Intent(this, ListScreenActivity::class.java)
+                    startActivity(intent)
                 }
+
             )
 
             if (qrCodeValue.isNotEmpty()) {
-                // Do something with the scanned QR code
                 artDetail(qrCodeValue)
             }
         }
@@ -70,26 +68,29 @@ class qrCodeActivity : ComponentActivity() {
         startActivity(intent)
     }
 
-    private fun navigateToLogIn() {
-        val intent = Intent(this, LogInActivity::class.java)
-        startActivity(intent)
-    }
-
     private fun artDetail(id: String){
+
+        val db = Firebase.firestore
+
+        // Create a new user with a first, middle, and last name
+        val user = hashMapOf(
+            "Funcionalidad" to "Fun1",
+            "Fecha" to Timestamp.now()
+        )
+
+        // Add a new document with a generated ID
+        db.collection("BQ33")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
+
         val intent = Intent(this, ArtworkDetailActivity::class.java)
         intent.putExtra("id", id.toInt())
         startActivity(intent)
-    }
-
-    private fun navigateUser() {
-        val pk = UserPreferences.getPk()
-        if(pk!!>=0) {
-            //Poner Lista de likeados
-        }
-        else{
-            val intent = Intent(this, LogInActivity::class.java)
-            startActivity(intent)
-        }
     }
 
 }
