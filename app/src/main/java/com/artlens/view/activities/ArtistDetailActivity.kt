@@ -45,9 +45,8 @@ class ArtistDetailActivity : ComponentActivity() {
                     navigateToMainActivity()
                 },
                 onArtworkClick = { artworkId ->
-                    // Navega a la pantalla de detalles de la obra de arte
                     val intent = Intent(this, ArtworkDetailActivity::class.java)
-                    intent.putExtra("ARTWORK_ID", artworkId)
+                    intent.putExtra("id", artworkId)  // Pasamos el ID de la obra seleccionada
                     startActivity(intent)
                 }
             )

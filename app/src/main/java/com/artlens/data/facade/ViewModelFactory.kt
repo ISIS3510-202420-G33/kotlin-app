@@ -2,6 +2,7 @@ package com.artlens.data.facade
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.artlens.view.viewmodels.ArtistListViewModel
 import com.artlens.view.viewmodels.ArtistViewModel
 import com.artlens.view.viewmodels.ArtworkListViewModel
 import com.artlens.view.viewmodels.ArtworkViewModel
@@ -39,6 +40,9 @@ class ViewModelFactory(private val facade: ArtlensFacade) : ViewModelProvider.Fa
             }
             modelClass.isAssignableFrom(LikesViewModel::class.java) -> {
                 LikesViewModel(facade) as T
+            }
+            modelClass.isAssignableFrom(ArtistListViewModel::class.java) -> {
+                ArtistListViewModel(facade) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

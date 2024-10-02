@@ -124,12 +124,17 @@ fun ArtistDetailScreen(
 
             // Carrusel de obras de arte del artista
             Spacer(modifier = Modifier.height(24.dp))
-            Text(text = "Artworks by this artist", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, fontSize = 20.sp)
-            Spacer(modifier = Modifier.height(16.dp))
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = "Highlighted Artworks",
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
 
             // Carrusel de imágenes de obras de arte
             ArtworkCarousel(artworks = artworks, onArtworkClick = onArtworkClick)
-            Spacer(modifier = Modifier.height(44.dp))
+            Spacer(modifier = Modifier.height(104.dp))
         }
 
         // Barra de navegación inferior
@@ -175,20 +180,23 @@ fun ArtworkCarousel(artworks: List<ArtworkResponse>, onArtworkClick: (Int) -> Un
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
+            .wrapContentHeight()  // Usamos wrapContentHeight para adaptarse al contenido
     ) {
         items(artworks.take(5)) { artwork ->
-            Image(
-                painter = rememberImagePainter(data = artwork.fields.image),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .width(300.dp)
-                    .height(200.dp)
-                    .clip(MaterialTheme.shapes.medium)
-                    .clickable { onArtworkClick(artwork.pk) },  // Al hacer clic, navega a los detalles de la obra
-                contentScale = ContentScale.Crop
-            )
+            Box(modifier = Modifier.padding(8.dp)) {
+                Image(
+                    painter = rememberImagePainter(data = artwork.fields.image),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .width(200.dp)  // Ajustamos el ancho de las imágenes
+                        .aspectRatio(3f / 4f)  // Mantén una proporción adecuada (3:4)
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable { onArtworkClick(artwork.pk) },  // Manejo de clic en la imagen
+                    contentScale = ContentScale.Crop  // Ajustamos para que la imagen llene el espacio sin cortar
+                )
+            }
         }
     }
 }
+
+

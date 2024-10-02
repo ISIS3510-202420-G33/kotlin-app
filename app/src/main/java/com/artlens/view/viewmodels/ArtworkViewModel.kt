@@ -17,6 +17,21 @@ class ArtworkViewModel(private val facade: ArtlensFacade) : ViewModel() {
     private val _isLiked = MutableLiveData<Boolean>()
     val isLiked: LiveData<Boolean> get() = _isLiked
 
+    // LiveData para almacenar el nombre del artista
+    private val _artistName = MutableLiveData<String>()
+    val artistName: LiveData<String> get() = _artistName
+
+    // Método para obtener los detalles del artista por su ID
+    fun fetchArtistName(artistId: Int) {
+        viewModelScope.launch {
+            facade.getArtistDetail(artistId).observeForever { artistResponse ->
+                artistResponse?.let {
+                    _artistName.value = it.fields.name  // Almacenar el nombre del artista
+                }
+            }
+        }
+    }
+
     // Método para verificar si la obra está en los favoritos del usuario
     fun checkIfLiked(userId: Int, artworkId: Int) {
         viewModelScope.launch {
@@ -33,7 +48,6 @@ class ArtworkViewModel(private val facade: ArtlensFacade) : ViewModel() {
                 if (success) {
                     _isLiked.value = true
                 }
-                // Aquí puedes manejar errores si lo deseas
             }
         }
     }
@@ -45,7 +59,6 @@ class ArtworkViewModel(private val facade: ArtlensFacade) : ViewModel() {
                 if (success) {
                     _isLiked.value = false
                 }
-                // Aquí puedes manejar errores si lo deseas
             }
         }
     }
@@ -59,9 +72,9 @@ class ArtworkViewModel(private val facade: ArtlensFacade) : ViewModel() {
         }
     }
 
-    // Método para establecer el ID de la obra y verificar el estado de "me gusta"
     fun fetchArtworkDetail(artworkId: Int, userId: Int) {
         _artworkId.value = artworkId
         checkIfLiked(userId, artworkId)
     }
 }
+

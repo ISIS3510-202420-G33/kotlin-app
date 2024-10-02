@@ -1,13 +1,12 @@
 package com.artlens.view.activities
 
 import android.Manifest
-import android.content.ContentValues.TAG
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,7 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.artlens.R
 import com.artlens.view.viewmodels.MuseumsListViewModel
 import com.artlens.data.facade.FacadeProvider
@@ -34,11 +33,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.Firebase
-import com.google.firebase.Timestamp
-import com.google.firebase.firestore.firestore
 import com.google.maps.android.compose.*
-import kotlinx.coroutines.launch
 
 class MapsActivity : ComponentActivity() {
 
@@ -47,32 +42,27 @@ class MapsActivity : ComponentActivity() {
         ViewModelFactory(FacadeProvider.facade)
     }
 
+    private var userLat: Double = 4.60971 // Valor por defecto (Bogotá)
+    private var userLng: Double = -74.08175 // Valor por defecto (Bogotá)
+
+    // Registrar la solicitud de permisos
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            getLastLocation()  // Obtener ubicación si el permiso es concedido
+        } else {
+            Log.w("MapsActivity", "Permiso de ubicación denegado")
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val db = Firebase.firestore
-
-        // Create a new user with a first, middle, and last name
-        val user = hashMapOf(
-            "Funcionalidad" to "Fun3",
-            "Fecha" to Timestamp.now()
-        )
-
-        // Add a new document with a generated ID
-        db.collection("BQ33")
-            .add(user)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
-
-        // Inicializamos el cliente para obtener la ubicación del usuario
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        // Comenzar el mapa
         setContent {
-            // Contenedor del contenido
             MapScreen()
         }
     }
@@ -80,39 +70,73 @@ class MapsActivity : ComponentActivity() {
     @Composable
     fun MapScreen() {
         val context = LocalContext.current
-        var userLat by remember { mutableStateOf(4.60971) }  // Bogotá como valor por defecto
-        var userLng by remember { mutableStateOf(-74.08175) }
 
-        // Obtenemos la ubicación del usuario cuando el Composable se inicializa
+        // Pedir permisos al inicializar el Composable
         LaunchedEffect(Unit) {
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                    location?.let {
-                        userLat = it.latitude
-                        userLng = it.longitude
-                    }
+            checkAndRequestLocationPermission(context)
+        }
+
+        // Obtener los museos cercanos basados en la ubicación actual
+        val closestMuseums by museumsViewModel.getClosestMuseums(userLat, userLng).observeAsState(emptyList())
+
+        // Pantalla del mapa
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column {
+                TopBar()
+                GoogleMapComposable(userLat, userLng, closestMuseums)
+            }
+        }
+    }
+
+    private fun checkAndRequestLocationPermission(context: android.content.Context) {
+        when {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // El permiso ya está concedido
+                getLastLocation()
+            }
+            else -> {
+                // Solicitar el permiso
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+    }
+
+    // Obtener la última ubicación conocida del usuario
+    private fun getLastLocation() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                location?.let {
+                    userLat = it.latitude
+                    userLng = it.longitude
+                    // Actualizar los museos cercanos una vez que se obtiene la ubicación
+                    museumsViewModel.getClosestMuseums(userLat, userLng)
                 }
             }
         }
+    }
 
-        // Obtenemos los museos más cercanos observando el LiveData
-        val closestMuseumsLiveData = museumsViewModel.getClosestMuseums(userLat, userLng)
-        val closestMuseums by closestMuseumsLiveData.observeAsState(emptyList())  // Observa los cambios
-
+    @Composable
+    fun TopBar() {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)
+                .background(Color.White)
         ) {
-            // Barra superior (similar a la de MainScreen)
-            Box(
+            IconButton(
+                onClick = { onBackPressed() },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp)  // Aproximadamente 1/8 de la altura de la pantalla
-                    .background(Color.White)
+                    .align(Alignment.CenterStart)
+                    .padding(start = 16.dp)
             ) {
+
                 // Flecha de retroceso a la izquierda
                 IconButton(
                     onClick = {
@@ -135,11 +159,20 @@ class MapsActivity : ComponentActivity() {
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.Center) // Alineación centrada en el Box
+
+                Image(
+                    painter = painterResource(id = R.drawable.arrow),
+                    contentDescription = "Back Arrow",
+                    modifier = Modifier.size(30.dp)
                 )
             }
 
-            // Mapa ocupando el resto del espacio
-            GoogleMapComposable(userLat, userLng, closestMuseums)
+            Text(
+                text = "Map of Museums",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
     }
 
@@ -149,27 +182,15 @@ class MapsActivity : ComponentActivity() {
             position = CameraPosition.fromLatLngZoom(LatLng(userLat, userLng), 12f)
         }
 
-        val context = LocalContext.current
-
         GoogleMap(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .padding(top = 80.dp),  // Ajustar la altura para dejar espacio a la barra superior
+                .fillMaxSize()
+                .padding(top = 80.dp),
             cameraPositionState = cameraPositionState,
-            uiSettings = MapUiSettings(
-                tiltGesturesEnabled = false // Desactivar el gesto de inclinación
-            ),
             properties = MapProperties(
-                isMyLocationEnabled = ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED,
-                mapType = MapType.NORMAL
+                isMyLocationEnabled = true
             )
-        )
-        {
-            // Solo mostramos los 5 museos más cercanos
+        ) {
             museums.forEach { museum ->
                 val museumLocation = LatLng(museum.fields.latitude, museum.fields.longitude)
                 Marker(
@@ -179,5 +200,4 @@ class MapsActivity : ComponentActivity() {
             }
         }
     }
-
 }
