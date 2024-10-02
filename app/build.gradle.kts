@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt") // Habilitar Kapt para procesadores de anotaciones en Kotlin
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -48,6 +49,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.firebase.firestore)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -99,6 +102,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.0")
 
     //Para QR
+    implementation("com.google.guava:guava:31.1-android")
     implementation ("com.google.mlkit:barcode-scanning:17.0.3")
     implementation ("androidx.camera:camera-camera2:1.1.0-alpha05")
     implementation ("androidx.camera:camera-lifecycle:1.1.0-alpha05")

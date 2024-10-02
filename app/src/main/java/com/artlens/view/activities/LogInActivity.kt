@@ -1,7 +1,9 @@
 package com.artlens.view.activities
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -9,6 +11,9 @@ import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.facade.ViewModelFactory
 import com.artlens.view.composables.LogInScreen
 import com.artlens.view.viewmodels.LogInViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.firestore
 
 class LogInActivity : ComponentActivity() {
 
@@ -32,6 +37,23 @@ class LogInActivity : ComponentActivity() {
     private fun authenticateUser(userName: String, password: String) {
 
         logInViewModel.authenticateUser(userName, password)
+        val db = Firebase.firestore
+
+        // Create a new user with a first, middle, and last name
+        val user = hashMapOf(
+            "Funcionalidad" to "Fun5",
+            "Fecha" to Timestamp.now()
+        )
+
+        // Add a new document with a generated ID
+        db.collection("BQ33")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
 
     }
 

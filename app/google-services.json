@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "121731421743",
+    "project_id": "moviles-436717",
+    "storage_bucket": "moviles-436717.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:121731421743:android:29d4ca633ff099d6f858da",
+        "android_client_info": {
+          "package_name": "com.artlens"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh6OnOa0sjQdB7UhNfa9MhnDfTqBNUt24"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:121731421743:android:b8f428cd2409c10ef858da",
+        "android_client_info": {
+          "package_name": "com.example.artlens"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh6OnOa0sjQdB7UhNfa9MhnDfTqBNUt24"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
