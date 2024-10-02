@@ -36,4 +36,8 @@ interface ArtlensFacade {
     //Comments
     fun postComment(content: String, date: String, artworkId: Int, userId: Int): LiveData<Boolean>
     fun getCommentsByArtwork(artworkId: Int): LiveData<List<CommentResponse>>
+
+    //Analytics
+    fun getArtworkMostLikedMonth(): LiveData<ArtworkResponse>
+    fun getArtworkRecommendation(userId: Int): LiveData<List<ArtworkResponse>>
 }
