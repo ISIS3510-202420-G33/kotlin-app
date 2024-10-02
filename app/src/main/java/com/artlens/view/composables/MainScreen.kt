@@ -48,6 +48,7 @@ fun MainScreen(
 ) {
 
     if (showDialog) {
+        
         AlertDialog(
             onDismissRequest = onDismissDialog,
             buttons = {
