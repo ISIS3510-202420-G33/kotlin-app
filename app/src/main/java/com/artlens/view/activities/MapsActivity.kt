@@ -127,52 +127,41 @@ class MapsActivity : ComponentActivity() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(80.dp)
                 .background(Color.White)
         ) {
-            IconButton(
-                onClick = { onBackPressed() },
+            Row(
                 modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(start = 16.dp)
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .background(Color.White),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-
-                // Flecha de retroceso a la izquierda
-                IconButton(
-                    onClick = {
-                        onBackPressed()
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterStart) // Alinear a la izquierda
-                        .padding(start = 16.dp) // Añadir padding opcional
-                ) {
+                // Flecha de retroceso
+                IconButton(onClick = { onBackPressed() }) {
                     Image(
                         painter = painterResource(id = R.drawable.arrow),
                         contentDescription = "Back Arrow",
-                        modifier = Modifier.size(30.dp)  // Tamaño ajustado de la flecha
+                        modifier = Modifier.size(30.dp)
                     )
                 }
 
                 // Título centrado
                 Text(
-                    text = "Map of Museums",  // Título centrado de la barra
+                    text = "HOME",
                     fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.Center) // Alineación centrada en el Box
+                    fontWeight = FontWeight.Bold)
 
-                Image(
-                    painter = painterResource(id = R.drawable.arrow),
-                    contentDescription = "Back Arrow",
-                    modifier = Modifier.size(30.dp)
-                )
+                // Icono de perfil a la derecha
+                    IconButton(onClick = {}) {
+                        Image(
+                            painter = painterResource(id = R.drawable.profile),
+                            contentDescription = "Profile Icon",
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
+
             }
-
-            Text(
-                text = "Map of Museums",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.align(Alignment.Center)
-            )
         }
     }
 
