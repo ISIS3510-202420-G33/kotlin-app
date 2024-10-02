@@ -45,6 +45,7 @@ class ArtworkListViewModel(private val facade: ArtlensFacade) : ViewModel() {
         }
     }
 
+
     /*
     fun likeArtwork(userId: Int, artworkId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -68,4 +69,5 @@ class ArtworkListViewModel(private val facade: ArtlensFacade) : ViewModel() {
             _likedArtworks.postValue(likedArtworks.value)
         }
     }*/
+
 }

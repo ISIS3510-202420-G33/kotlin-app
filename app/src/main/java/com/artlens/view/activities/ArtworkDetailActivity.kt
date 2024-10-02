@@ -1,3 +1,4 @@
+// Archivo: ArtworkDetailActivity.kt
 package com.artlens.view.activities
 
 import android.annotation.SuppressLint
@@ -33,8 +34,8 @@ class ArtworkDetailActivity : ComponentActivity() {
 
         // Usar setContent para definir el layout con Jetpack Compose
         setContent {
-            // Observar los datos de la obra y pasarlos a la función Composable
             val artworkState by artworkViewModel.artworkLiveData.observeAsState()
+            val isLiked by artworkViewModel.isLiked.observeAsState(false)
 
             // Configurar la estructura general de la pantalla con Scaffold
             Scaffold(

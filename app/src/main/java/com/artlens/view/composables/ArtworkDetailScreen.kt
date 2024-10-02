@@ -1,3 +1,4 @@
+// Archivo: ArtworkDetailScreen.kt
 package com.artlens.view.composables
 
 import android.widget.ImageView
@@ -9,9 +10,13 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+// Importación necesaria para utilizar Color
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -29,12 +34,16 @@ import com.bumptech.glide.request.RequestOptions
 @Composable
 fun ArtworkDetailScreen(
     artwork: ArtworkResponse?,
-    onBackClick: () -> Unit,
     isLiked: Boolean,
+    onBackClick: () -> Unit,
     onLikeClick: () -> Unit,
     onMoreInfoClick: (Int) -> Unit
 ) {
     val context = LocalContext.current
+
+    // Definir el color personalizado para la estrella
+    val likedColor = Color(red = 160, green = 82, blue = 45)
+
     var newComment by remember { mutableStateOf("") }
     var comments by remember {
         mutableStateOf(
