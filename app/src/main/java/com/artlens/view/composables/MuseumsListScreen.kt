@@ -30,7 +30,7 @@ fun MuseumsListScreen(
     onRecommendationClick: () -> Unit,
     onMuseumClick: (Int) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

@@ -1,7 +1,9 @@
 package com.artlens.view.activities
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
@@ -9,6 +11,10 @@ import androidx.compose.runtime.*
 import androidx.core.content.ContextCompat
 import com.artlens.utils.UserPreferences
 import com.artlens.view.composables.QRCodeScanner
+import com.google.firebase.Firebase
+import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.firestore
+import com.google.firebase.Timestamp
 
 
 class qrCodeActivity : ComponentActivity() {
@@ -18,6 +24,24 @@ class qrCodeActivity : ComponentActivity() {
 
         setContent {
             var qrCodeValue by remember { mutableStateOf("") }
+
+            val db = Firebase.firestore
+
+            // Create a new user with a first, middle, and last name
+            val user = hashMapOf(
+                "Funcionalidad" to "Fun1",
+                "Fecha" to Timestamp.now()
+            )
+
+            // Add a new document with a generated ID
+            db.collection("BQ33")
+                .add(user)
+                .addOnSuccessListener { documentReference ->
+                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error adding document", e)
+                }
 
             QRCodeScanner(
                 onBackClick = {navigateToMainActivity()},
