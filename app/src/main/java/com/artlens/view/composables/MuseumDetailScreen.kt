@@ -25,7 +25,7 @@ fun MuseumDetailScreen(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

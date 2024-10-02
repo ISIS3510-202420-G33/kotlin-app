@@ -10,6 +10,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.artlens.R
+import com.artlens.utils.UserPreferences
 
 @Composable
 fun MainScreen(
@@ -34,9 +39,90 @@ fun MainScreen(
     onBackClick: () -> Unit,
     onUserClick: () -> Unit,
     onCameraClick: () -> Unit,
-    onMuseumsClick: () -> Unit
+    onMuseumsClick: () -> Unit,
+    showDialog: Boolean,
+    onDismissDialog: () -> Unit,
+    logOutClick: () -> Unit
+
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissDialog,
+            buttons = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp) // Add padding to the box
+                ) {
+                    Column(
+                        modifier = Modifier.align(Alignment.Center), // Center Column within Box
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Text(
+                            text = "Hi ${UserPreferences.getUsername()}",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+
+                        Spacer(modifier = Modifier.height(8.dp)) // Add space between the button and the line
+
+                        // Horizontal Divider
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(Color.Black) // Color of the divider
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                        // First Option Button
+                        Button(
+                            onClick = {
+                                onDismissDialog() // Dismiss the dialog It should navigate to favourites page
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .clip(CircleShape), // Set a fixed height for the button
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color.Transparent,
+                                contentColor = Color.Black
+                            ),
+                            elevation = ButtonDefaults.elevation(0.dp)
+                        ) {
+                            Text("View Favorites")
+                        }
+
+                        // Second Option Button
+                        Button(
+                            onClick = {
+                                logOutClick()
+                                onDismissDialog()} // Dismiss the dialog
+                            ,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .clip(CircleShape), // Set a fixed height for the button
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color.Transparent,
+                                contentColor = Color.Black
+                            ),
+                            elevation = ButtonDefaults.elevation(0.dp)
+                        ) {
+                            Text("Log Out")
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+
+
+    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

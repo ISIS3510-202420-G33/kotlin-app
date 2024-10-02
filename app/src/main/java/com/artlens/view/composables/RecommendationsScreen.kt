@@ -36,7 +36,7 @@ fun RecommendationsScreen(
     val artworks by artworkListViewModel.artworksLiveData.observeAsState(emptyList())
     Log.d("RecommendationsScreen", "Number of artworks: ${artworks.size}")
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
