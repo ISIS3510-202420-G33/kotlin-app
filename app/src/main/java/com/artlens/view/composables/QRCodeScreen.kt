@@ -27,10 +27,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Divider
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -56,6 +59,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.artlens.R
+import com.artlens.utils.UserPreferences
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
@@ -68,8 +72,90 @@ fun QRCodeScanner(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
     onRecommendationClick: () -> Unit,
-    onUSerClick: () -> Unit
+    onUSerClick: () -> Unit,
+    showDialog: Boolean,
+    onDismissDialog: () -> Unit,
+    logOutClick: () -> Unit,
+    onViewFavoritesClick: () -> Unit
 ) {
+
+
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissDialog,
+            buttons = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp) // Add padding to the box
+                ) {
+                    Column(
+                        modifier = Modifier.align(Alignment.Center), // Center Column within Box
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Text(
+                            text = "Hi ${UserPreferences.getUsername()}",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+
+                        Spacer(modifier = Modifier.height(8.dp)) // Add space between the button and the line
+
+                        // Horizontal Divider
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(Color.Black) // Color of the divider
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                        // First Option Button
+                        Button(
+                            onClick = {
+                                onDismissDialog()// Dismiss the dialog It should navigate to favourites page
+                                onViewFavoritesClick() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .clip(CircleShape), // Set a fixed height for the button
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color.Transparent,
+                                contentColor = Color.Black
+                            ),
+                            elevation = ButtonDefaults.elevation(0.dp)
+                        ) {
+                            Text("View Favorites")
+                        }
+
+                        // Second Option Button
+                        Button(
+                            onClick = {
+                                logOutClick()
+                                onDismissDialog()} // Dismiss the dialog
+                            ,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .clip(CircleShape), // Set a fixed height for the button
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color.Transparent,
+                                contentColor = Color.Black
+                            ),
+                            elevation = ButtonDefaults.elevation(0.dp)
+                        ) {
+                            Text("Log Out")
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+
     val context = LocalContext.current
     val lifecycleOwner = LocalContext.current as LifecycleOwner
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }

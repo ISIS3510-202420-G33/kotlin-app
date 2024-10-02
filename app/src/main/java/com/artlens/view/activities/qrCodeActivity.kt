@@ -24,19 +24,35 @@ class qrCodeActivity : ComponentActivity() {
 
         setContent {
             var qrCodeValue by remember { mutableStateOf("") }
+            var showDialog by remember { mutableStateOf(false) }
 
             QRCodeScanner(
                 onBackClick = {onBackPressed()},
                 onHomeClick = {navigateToMainActivity()},
                 onRecommendationClick = {navigateToRecommendations()},
-                onUSerClick = {navigateUser()},
+                onUSerClick = {
+                    val pk = UserPreferences.getPk()
+                    if(pk!!>=0) {
+                        showDialog = true
+                    }
+                    else{
+                        val intent = Intent(this, LogInActivity::class.java)
+                        startActivity(intent)
+                    }},
                 onQRCodeScanned = { qrCode ->
                     qrCodeValue = qrCode
+                },
+                showDialog = showDialog,
+                onDismissDialog = { showDialog = false },
+                logOutClick = {UserPreferences.clearUserData()},
+                onViewFavoritesClick = {
+                    val intent = Intent(this, ListScreenActivity::class.java)
+                    startActivity(intent)
                 }
+
             )
 
             if (qrCodeValue.isNotEmpty()) {
-                // Do something with the scanned QR code
                 artDetail(qrCodeValue)
             }
         }
@@ -75,17 +91,6 @@ class qrCodeActivity : ComponentActivity() {
         val intent = Intent(this, ArtworkDetailActivity::class.java)
         intent.putExtra("id", id.toInt())
         startActivity(intent)
-    }
-
-    private fun navigateUser() {
-        val pk = UserPreferences.getPk()
-        if(pk!!>=0) {
-            //Poner Lista de likeados
-        }
-        else{
-            val intent = Intent(this, LogInActivity::class.java)
-            startActivity(intent)
-        }
     }
 
 }
