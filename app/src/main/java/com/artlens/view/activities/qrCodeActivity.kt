@@ -25,24 +25,6 @@ class qrCodeActivity : ComponentActivity() {
         setContent {
             var qrCodeValue by remember { mutableStateOf("") }
 
-            val db = Firebase.firestore
-
-            // Create a new user with a first, middle, and last name
-            val user = hashMapOf(
-                "Funcionalidad" to "Fun1",
-                "Fecha" to Timestamp.now()
-            )
-
-            // Add a new document with a generated ID
-            db.collection("BQ33")
-                .add(user)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error adding document", e)
-                }
-
             QRCodeScanner(
                 onBackClick = {navigateToMainActivity()},
                 onHomeClick = {navigateToMainActivity()},
@@ -70,12 +52,26 @@ class qrCodeActivity : ComponentActivity() {
         startActivity(intent)
     }
 
-    private fun navigateToLogIn() {
-        val intent = Intent(this, LogInActivity::class.java)
-        startActivity(intent)
-    }
-
     private fun artDetail(id: String){
+
+        val db = Firebase.firestore
+
+        // Create a new user with a first, middle, and last name
+        val user = hashMapOf(
+            "Funcionalidad" to "Fun1",
+            "Fecha" to Timestamp.now()
+        )
+
+        // Add a new document with a generated ID
+        db.collection("BQ33")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
+
         val intent = Intent(this, ArtworkDetailActivity::class.java)
         intent.putExtra("id", id.toInt())
         startActivity(intent)

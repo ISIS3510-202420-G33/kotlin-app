@@ -1,5 +1,6 @@
 package com.artlens.data.services
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.artlens.data.api.UserApi
@@ -10,6 +11,9 @@ import com.artlens.data.models.UserAuth
 import com.artlens.data.models.UserFields
 import com.artlens.data.models.UserResponse
 import com.artlens.utils.UserPreferences
+import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.firestore
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Call
@@ -17,6 +21,24 @@ import retrofit2.Call
 class UserService(private val userApi: UserApi) {
 
     fun createUser(email: String, userName: String, name: String, password: String): MutableLiveData<CreateUserResponse> {
+
+        val db = Firebase.firestore
+
+        // Create a new user with a first, middle, and last name
+        val user = hashMapOf(
+            "Funcionalidad" to "Fun5",
+            "Fecha" to Timestamp.now()
+        )
+
+        // Add a new document with a generated ID
+        db.collection("BQ33")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
 
         val userLiveData = MutableLiveData<CreateUserResponse>()
         val createUser = UserFields(name, userName, email, password)
@@ -53,6 +75,24 @@ class UserService(private val userApi: UserApi) {
     }
 
     fun authenticateUser(userName: String, password: String): MutableLiveData<CreateUserResponse> {
+
+        val db = Firebase.firestore
+
+        // Create a new user with a first, middle, and last name
+        val user = hashMapOf(
+            "Funcionalidad" to "Fun5",
+            "Fecha" to Timestamp.now()
+        )
+
+        // Add a new document with a generated ID
+        db.collection("BQ33")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
 
         val userLiveData = MutableLiveData<CreateUserResponse>()
         val userAuth = UserAuth(userName, password)

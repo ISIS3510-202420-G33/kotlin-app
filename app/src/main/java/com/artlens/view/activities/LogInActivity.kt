@@ -37,23 +37,6 @@ class LogInActivity : ComponentActivity() {
     private fun authenticateUser(userName: String, password: String) {
 
         logInViewModel.authenticateUser(userName, password)
-        val db = Firebase.firestore
-
-        // Create a new user with a first, middle, and last name
-        val user = hashMapOf(
-            "Funcionalidad" to "Fun5",
-            "Fecha" to Timestamp.now()
-        )
-
-        // Add a new document with a generated ID
-        db.collection("BQ33")
-            .add(user)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
 
     }
 

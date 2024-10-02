@@ -1,9 +1,11 @@
 package com.artlens.view.activities
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.activity.compose.setContent
@@ -15,6 +17,9 @@ import com.artlens.data.facade.ViewModelFactory
 import com.artlens.utils.UserPreferences
 import com.artlens.view.viewmodels.ArtworkViewModel
 import com.artlens.view.composables.ArtworkDetailScreen
+import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.firestore
 import java.util.*
 
 class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
@@ -95,6 +100,23 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     // Método para leer el texto en voz alta
     private fun speakOut(text: String) {
+        val db = Firebase.firestore
+
+        // Create a new user with a first, middle, and last name
+        val user = hashMapOf(
+            "Funcionalidad" to "Fun4",
+            "Fecha" to Timestamp.now()
+        )
+
+        // Add a new document with a generated ID
+        db.collection("BQ33")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
     }
 

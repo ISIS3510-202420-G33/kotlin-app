@@ -1,7 +1,9 @@
 package com.artlens.view.activities
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -10,6 +12,9 @@ import com.artlens.view.viewmodels.LikesViewModel
 import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.facade.ViewModelFactory
 import com.artlens.utils.UserPreferences
+import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.firestore
 
 class ListScreenActivity : ComponentActivity() {
 
@@ -20,6 +25,24 @@ class ListScreenActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val db = Firebase.firestore
+
+        // Create a new user with a first, middle, and last name
+        val user = hashMapOf(
+            "Funcionalidad" to "Fun2",
+            "Fecha" to Timestamp.now()
+        )
+
+        // Add a new document with a generated ID
+        db.collection("BQ33")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
 
         val id  = UserPreferences.getPk()
 
