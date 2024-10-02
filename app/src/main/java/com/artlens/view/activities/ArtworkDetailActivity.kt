@@ -22,7 +22,8 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         ViewModelFactory(FacadeProvider.facade)
     }
 
-    private lateinit var tts: TextToSpeech  // Text-to-Speech instance
+    private lateinit var tts: TextToSpeech  // Instancia de Text-to-Speech
+    private var isSpeaking by mutableStateOf(false)  // Estado para verificar si el TTS está hablando
 
     companion object {
         private const val DEFAULT_USER_ID = 1
@@ -41,13 +42,24 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         // Usar el ID de usuario por defecto
         val userId = DEFAULT_USER_ID
 
+        // Llamamos al ViewModel para obtener los detalles de la obra de arte
+        artworkViewModel.fetchArtworkDetail(artworkId, userId)
+
         setContent {
+            // Observa el estado del artwork y si está marcado como 'me gusta'
             val artworkState by artworkViewModel.artworkLiveData.observeAsState()
             val isLiked by artworkViewModel.isLiked.observeAsState(false)
+            val artistName by artworkViewModel.artistName.observeAsState()
 
-            // Llamar al ViewModel para obtener los detalles de la obra
-            LaunchedEffect(Unit) {
-                artworkViewModel.fetchArtworkDetail(artworkId, userId)
+            // Este LaunchedEffect se ejecuta cuando cambia el estado del artwork
+            LaunchedEffect(artworkState) {
+                // Solo llamamos a fetchArtistName cuando el artworkState está cargado
+                artworkState?.let { artwork ->
+                    val artistId = artwork.fields.artist
+                    if (artistId != null) {
+                        artworkViewModel.fetchArtistName(artistId)
+                    }
+                }
             }
 
             // Configurar la estructura general de la pantalla con Scaffold
@@ -56,6 +68,8 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                 ArtworkDetailScreen(
                     artwork = artworkState,
                     isLiked = isLiked,
+                    artistName = artistName,  // Pasar el nombre del artista
+                    isSpeaking = isSpeaking,  // Pasamos el estado de si está hablando
                     onBackClick = { onBackPressed() },
                     onLikeClick = {
                         artworkViewModel.toggleLike(userId, artworkId)
@@ -66,7 +80,7 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                         startActivity(intent)
                     },
                     onInterpretationSpeakClick = { interpretation ->
-                        speakOut(interpretation)  // Leer en voz alta la interpretación
+                        toggleTTS(interpretation)  // Alternar el estado de TTS
                     }
                 )
             }
@@ -85,9 +99,27 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         }
     }
 
+    // Método para alternar entre iniciar y detener el TTS
+    private fun toggleTTS(text: String) {
+        if (isSpeaking) {
+            stopTTS()  // Detenemos el TTS si está hablando
+        } else {
+            speakOut(text)  // Iniciamos la narración si no está hablando
+        }
+    }
+
     // Método para leer el texto en voz alta
     private fun speakOut(text: String) {
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
+        isSpeaking = true  // Actualizamos el estado a "hablando"
+    }
+
+    // Método para detener el TTS
+    private fun stopTTS() {
+        if (this::tts.isInitialized) {
+            tts.stop()  // Detiene el TTS sin destruir la actividad
+            isSpeaking = false  // Actualizamos el estado a "no hablando"
+        }
     }
 
     // Liberar recursos cuando se destruya la actividad

@@ -32,10 +32,12 @@ import com.bumptech.glide.request.RequestOptions
 fun ArtworkDetailScreen(
     artwork: ArtworkResponse?,
     isLiked: Boolean,
+    artistName: String?,
+    isSpeaking: Boolean,  // Añadimos el estado para saber si el TTS está hablando
     onBackClick: () -> Unit,
     onLikeClick: () -> Unit,
     onMoreInfoClick: (Int) -> Unit,
-    onInterpretationSpeakClick: (String) -> Unit // Añadimos el parámetro para TTS
+    onInterpretationSpeakClick: (String) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -141,7 +143,10 @@ fun ArtworkDetailScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Artista y Técnica
-                Text(text = "Artist: ${it.fields.name}", style = MaterialTheme.typography.body1)
+                Text(
+                    text = "Artist: ${artistName ?: "Loading..."}",  // Mostrar el nombre del artista
+                    style = MaterialTheme.typography.body1
+                )
                 Text(text = "Technique: ${it.fields.technique}", style = MaterialTheme.typography.body1)
 
                 // Interpretación
@@ -157,19 +162,28 @@ fun ArtworkDetailScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Ícono de audio y su descripción
+                // Ícono de audio dinámico (Headphones o Pause)
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = {
-                        onInterpretationSpeakClick(it.fields.interpretation) // Conectamos el click con TTS
-                    }) {
+                    IconButton(
+                        onClick = {
+                            onInterpretationSpeakClick(it.fields.interpretation)
+                        }
+                    ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.headphones),
-                            contentDescription = "Audio",
+                            painter = if (isSpeaking) {
+                                painterResource(id = R.drawable.pause)  // Cambia el ícono cuando está hablando
+                            } else {
+                                painterResource(id = R.drawable.headphones)  // Ícono de headphones cuando no está hablando
+                            },
+                            contentDescription = if (isSpeaking) "Pause Audio" else "Start Audio",  // Descripción dinámica
                             modifier = Modifier.size(40.dp)
                         )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Click the icon to start the audio narration.")
+                    Text(
+                        text = if (isSpeaking) "Click the icon to stop the audio narration."
+                        else "Click the icon to play the audio narration."
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
