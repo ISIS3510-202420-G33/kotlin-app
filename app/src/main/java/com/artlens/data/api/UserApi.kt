@@ -26,6 +26,6 @@ interface UserApi {
     @GET("/user/liked/{userId}")
     fun getLikesByUser(@Path("userId") userId: Int): Call<List<ArtworkResponse>>
 
-    @DELETE("/user/{userId}/like/{artworkId}")
+    @DELETE("/user/liked/{userId}/{artworkId}")
     fun deleteLikeByUser(@Path("userId") userId: Int, @Path("artworkId") artworkId: Int): Call<Void>
 }

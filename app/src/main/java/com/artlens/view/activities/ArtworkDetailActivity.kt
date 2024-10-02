@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.facade.ViewModelFactory
+import com.artlens.utils.UserPreferences
 import com.artlens.view.viewmodels.ArtworkViewModel
 import com.artlens.view.composables.ArtworkDetailScreen
 import java.util.*
@@ -24,9 +25,6 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     private lateinit var tts: TextToSpeech  // Text-to-Speech instance
 
-    companion object {
-        private const val DEFAULT_USER_ID = 1
-    }
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +37,13 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         val artworkId = intent.getIntExtra("id", 2)
 
         // Usar el ID de usuario por defecto
-        val userId = DEFAULT_USER_ID
+
+        var userId = -1
+
+        if(UserPreferences.getPk() != null){
+            userId = UserPreferences.getPk()!!
+        }
+
 
         setContent {
             val artworkState by artworkViewModel.artworkLiveData.observeAsState()
@@ -58,7 +62,11 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                     isLiked = isLiked,
                     onBackClick = { onBackPressed() },
                     onLikeClick = {
-                        artworkViewModel.toggleLike(userId, artworkId)
+
+                        if (userId!=-1){
+                            artworkViewModel.toggleLike(userId, artworkId)
+                        }
+
                     },
                     onMoreInfoClick = { artistId ->
                         val intent = Intent(this@ArtworkDetailActivity, ArtistDetailActivity::class.java)

@@ -9,6 +9,7 @@ import com.artlens.view.composables.LikesListScreen
 import com.artlens.view.viewmodels.LikesViewModel
 import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.facade.ViewModelFactory
+import com.artlens.utils.UserPreferences
 
 class ListScreenActivity : ComponentActivity() {
 
@@ -20,8 +21,11 @@ class ListScreenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Llamamos a la función para obtener los museos que le gustan al usuario
-        likesViewModel.fetchLikedMuseums(userId = 1)
+        val id  = UserPreferences.getPk()
+
+        if (id != null) {
+            likesViewModel.fetchLikedMuseums(userId = id)
+        }
 
         setContent {
             LikesListScreen(

@@ -180,7 +180,7 @@ fun MainScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(70.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             // Título centrado
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -206,7 +206,7 @@ fun MainScreen(
             }
 
             // Botones de acción
-            Spacer(modifier = Modifier.height(90.dp))
+            Spacer(modifier = Modifier.height(50.dp))
             Button(
                 onClick = { onMuseumsClick() },
                 modifier = Modifier.fillMaxWidth(),
