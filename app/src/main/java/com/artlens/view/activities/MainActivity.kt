@@ -99,6 +99,12 @@ class MainActivity : ComponentActivity() {
                         startActivity(intent)
 
                     }
+                },
+                // Nuevo parámetro para manejar la acción de View Favorites
+                onViewFavoritesClick = {
+                    // Navegar a la pantalla de Likes (ListScreenActivity)
+                    val intent = Intent(this, ListScreenActivity::class.java)
+                    startActivity(intent)
                 }
             )
         }

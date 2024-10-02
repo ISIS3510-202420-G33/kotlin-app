@@ -42,7 +42,8 @@ fun MainScreen(
     onMuseumsClick: () -> Unit,
     showDialog: Boolean,
     onDismissDialog: () -> Unit,
-    logOutClick: () -> Unit
+    logOutClick: () -> Unit,
+    onViewFavoritesClick: () -> Unit
 
 ) {
 
@@ -81,8 +82,8 @@ fun MainScreen(
                         // First Option Button
                         Button(
                             onClick = {
-                                onDismissDialog() // Dismiss the dialog It should navigate to favourites page
-                            },
+                                onDismissDialog()// Dismiss the dialog It should navigate to favourites page
+                                onViewFavoritesClick() },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp)
@@ -194,8 +195,18 @@ fun MainScreen(
             // Carrusel de imágenes con URLs e IDs del backend
             MuseumImageCarousel(imageUrls = imageUrls, onMuseumClick = onMuseumClick, museumIds = museumIds)
 
+            // Título centrado
+            Spacer(modifier = Modifier.height(50.dp))
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = "The most view artwork until today is: La Gioconda with 30 likes",
+                    fontSize = 15.sp,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                )
+            }
+
             // Botones de acción
-            Spacer(modifier = Modifier.height(150.dp))
+            Spacer(modifier = Modifier.height(90.dp))
             Button(
                 onClick = { onMuseumsClick() },
                 modifier = Modifier.fillMaxWidth(),

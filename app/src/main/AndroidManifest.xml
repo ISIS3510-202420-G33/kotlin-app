@@ -99,6 +99,14 @@
         </activity>
 
         <activity
+            android:name=".view.activities.ListScreenActivity"
+            android:exported="true"
+            android:label="Liked Museums"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        </activity>
+
+
+        <activity
             android:name=".view.activities.RecommendationsActivity"
             android:exported="true"
             android:label="Recommendations" />
