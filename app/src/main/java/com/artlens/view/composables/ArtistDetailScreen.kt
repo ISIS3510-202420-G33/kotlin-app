@@ -134,7 +134,7 @@ fun ArtistDetailScreen(
 
             // Carrusel de imágenes de obras de arte
             ArtworkCarousel(artworks = artworks, onArtworkClick = onArtworkClick)
-            Spacer(modifier = Modifier.height(44.dp))
+            Spacer(modifier = Modifier.height(104.dp))
         }
 
         // Barra de navegación inferior

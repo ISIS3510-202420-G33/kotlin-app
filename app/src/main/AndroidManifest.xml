@@ -111,6 +111,13 @@
             android:exported="true"
             android:label="Recommendations" />
 
+        <activity
+            android:name=".view.activities.ArtistListActivity"
+            android:label="Artists"
+            android:exported="true">
+        </activity>
+
+
 
 
 

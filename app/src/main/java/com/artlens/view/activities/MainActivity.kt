@@ -1,9 +1,7 @@
 package com.artlens.view.activities
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -17,9 +15,6 @@ import com.artlens.view.viewmodels.MuseumsListViewModel
 import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.facade.ViewModelFactory
 import com.artlens.utils.UserPreferences
-import com.artlens.view.activities.MuseumsDetailActivity
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
 
 class MainActivity : ComponentActivity() {
 
@@ -60,8 +55,8 @@ class MainActivity : ComponentActivity() {
                     startActivity(intent)
                 },
                 onArtistClick = {
-                    // Regresar a la lista de museos
-                    val intent = Intent(this, ArtistDetailActivity::class.java)
+                    // Abrir la lista de artistas cuando se hace clic en "View Artists"
+                    val intent = Intent(this, ArtistListActivity::class.java)
                     startActivity(intent)
                 },
                 onRecommendationClick = {
@@ -71,36 +66,21 @@ class MainActivity : ComponentActivity() {
                 onBackClick = {
                     // No hacer nada cuando se presiona la flecha de retroceso
                 },
-
                 onCameraClick = {
-
                     val intent = Intent(this, qrCodeActivity::class.java)
                     startActivity(intent)
-
                 },
-
                 onDismissDialog = { showDialog = false },
-
-                logOutClick = {UserPreferences.clearUserData()},
-
+                logOutClick = { UserPreferences.clearUserData() },
                 onUserClick = {
-
-
                     val pk = UserPreferences.getPk()
-
-                    if(pk!!>=0) {
-
+                    if (pk!! >= 0) {
                         showDialog = true
-
-                    }
-                    else{
-
+                    } else {
                         val intent = Intent(this, LogInActivity::class.java)
                         startActivity(intent)
-
                     }
                 },
-                // Nuevo parámetro para manejar la acción de View Favorites
                 onViewFavoritesClick = {
                     // Navegar a la pantalla de Likes (ListScreenActivity)
                     val intent = Intent(this, ListScreenActivity::class.java)
@@ -108,6 +88,5 @@ class MainActivity : ComponentActivity() {
                 }
             )
         }
-
     }
 }
