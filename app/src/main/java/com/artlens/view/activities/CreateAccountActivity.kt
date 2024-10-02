@@ -27,7 +27,7 @@ class CreateAccountActivity : ComponentActivity() {
 
         setContent {
             CreateAccountScreen(
-                onBackClick = {navigateToLogIn()},
+                onBackClick = {onBackPressed()},
                 onHomeClick = {navigateToMainActivity()},
                 onRecommendationClick = {navigateToRecommendations()},
                 onCreateAccount = {email, userName, name, password ->

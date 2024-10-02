@@ -39,10 +39,10 @@ class ArtistDetailActivity : ComponentActivity() {
             ArtistDetailScreen(
                 artist = artistState,
                 artworks = artworksState,
-                onBackClick = { finish() },  // Acción para el botón de "Volver"
+                onBackClick = { onBackPressed() },  // Acción para el botón de "Volver"
                 onHomeClick = {
                     // Navegación al Home
-                    finish()
+                    navigateToMainActivity()
                 },
                 onArtworkClick = { artworkId ->
                     // Navega a la pantalla de detalles de la obra de arte
@@ -58,5 +58,10 @@ class ArtistDetailActivity : ComponentActivity() {
                 artworkListViewModel.fetchArtworksByArtist(artistId)  // Obtener las obras del artista
             }
         }
+    }
+
+    private fun navigateToMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 }

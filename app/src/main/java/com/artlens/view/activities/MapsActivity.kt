@@ -116,9 +116,7 @@ class MapsActivity : ComponentActivity() {
                 // Flecha de retroceso a la izquierda
                 IconButton(
                     onClick = {
-                        // Acción para volver a la MainActivity
-                        val intent = Intent(context, MainActivity::class.java)
-                        context.startActivity(intent)
+                        onBackPressed()
                     },
                     modifier = Modifier
                         .align(Alignment.CenterStart) // Alinear a la izquierda

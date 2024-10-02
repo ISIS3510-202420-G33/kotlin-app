@@ -28,7 +28,7 @@ class MuseumsListActivity : ComponentActivity() {
             // Pasar la lista de museos y el manejador del click a la pantalla de lista
             MuseumsListScreen(
                 museums = museumsState,
-                onBackClick = { navigateToMainActivity() }, // Flecha de regreso
+                onBackClick = { onBackPressed() }, // Flecha de regreso
                 onHomeClick = { navigateToMainActivity() }, // Botón de Home
                 onRecommendationClick = { navigateToRecommendations() } // Fuego para recomendaciones
             ) { museumId ->

@@ -27,7 +27,7 @@ class LogInActivity : ComponentActivity() {
         setContent {
             LogInScreen(
                 onCreateAccount = {navigateToCreate()},
-                onBackClick = {navigateToMainActivity()},
+                onBackClick = {onBackPressed()},
                 onLogInClick = {userName, password -> authenticateUser(userName, password) },
                 userResponse = logInViewModel.userResponse
             )

@@ -26,7 +26,7 @@ class qrCodeActivity : ComponentActivity() {
             var qrCodeValue by remember { mutableStateOf("") }
 
             QRCodeScanner(
-                onBackClick = {navigateToMainActivity()},
+                onBackClick = {onBackPressed()},
                 onHomeClick = {navigateToMainActivity()},
                 onRecommendationClick = {navigateToRecommendations()},
                 onUSerClick = {navigateUser()},
