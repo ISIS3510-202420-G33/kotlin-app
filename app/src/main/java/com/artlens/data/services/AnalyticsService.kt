@@ -11,44 +11,44 @@ import retrofit2.Response
 
 class AnalyticsService(private val analyticsApi: AnalyticsApi) {
 
-    // Obtener la obra más likeada del mes (una sola obra)
+    // Método para obtener la obra más likeada del mes
     fun getArtworkMostLikedMonth(): LiveData<ArtworkResponse> {
-        val artworkLiveData = MutableLiveData<ArtworkResponse>()
+        val mostLikedArtworkLiveData = MutableLiveData<ArtworkResponse>()
 
-        analyticsApi.getArtworkMostLikedMonth().enqueue(object : Callback<ArtworkResponse> {
-            override fun onResponse(call: Call<ArtworkResponse>, response: Response<ArtworkResponse>) {
-                if (response.isSuccessful && response.body() != null) {
-                    // Asignamos la obra más likeada al LiveData
-                    artworkLiveData.value = response.body()
+        analyticsApi.getArtworkMostLikedMonth().enqueue(object : Callback<List<ArtworkResponse>> {
+            override fun onResponse(call: Call<List<ArtworkResponse>>, response: Response<List<ArtworkResponse>>) {
+                if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
+                    val firstArtwork = response.body()?.first()
+                    Log.d("AnalyticsService", "MostLikedArtwork received: $firstArtwork")
+                    mostLikedArtworkLiveData.value = firstArtwork
                 } else {
-                    Log.e("AnalyticsService", "Error: ${response.errorBody()?.string()}")
+                    Log.e("AnalyticsService", "Error in response: ${response.errorBody()?.string()}")
                 }
             }
 
-            override fun onFailure(call: Call<ArtworkResponse>, t: Throwable) {
-                artworkLiveData.value = null // Manejo de error, devolvemos nulo
+            override fun onFailure(call: Call<List<ArtworkResponse>>, t: Throwable) {
                 Log.e("AnalyticsService", "Failure: ${t.message}")
             }
         })
 
-        return artworkLiveData
+        return mostLikedArtworkLiveData
     }
 
-    // Obtener las recomendaciones de obras de arte para un usuario específico
+    // Método para obtener las recomendaciones de obras basadas en el usuario
     fun getArtworkRecommendation(userId: Int): LiveData<List<ArtworkResponse>> {
         val recommendationsLiveData = MutableLiveData<List<ArtworkResponse>>()
 
         analyticsApi.getArtworkRecommendation(userId).enqueue(object : Callback<List<ArtworkResponse>> {
             override fun onResponse(call: Call<List<ArtworkResponse>>, response: Response<List<ArtworkResponse>>) {
                 if (response.isSuccessful && response.body() != null) {
+                    Log.d("AnalyticsService", "Recommendations received: ${response.body()}")
                     recommendationsLiveData.value = response.body()
                 } else {
-                    Log.e("AnalyticsService", "Error: ${response.errorBody()?.string()}")
+                    Log.e("AnalyticsService", "Error in response: ${response.errorBody()?.string()}")
                 }
             }
 
             override fun onFailure(call: Call<List<ArtworkResponse>>, t: Throwable) {
-                recommendationsLiveData.value = emptyList()  // Retornamos una lista vacía si falla
                 Log.e("AnalyticsService", "Failure: ${t.message}")
             }
         })
@@ -56,3 +56,6 @@ class AnalyticsService(private val analyticsApi: AnalyticsApi) {
         return recommendationsLiveData
     }
 }
+
+
+
