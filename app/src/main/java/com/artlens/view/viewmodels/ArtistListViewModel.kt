@@ -15,7 +15,7 @@ class ArtistListViewModel(private val facade: ArtlensFacade) : ViewModel() {
     // Función para obtener todos los artistas
     fun fetchAllArtists() {
         viewModelScope.launch {
-            facade.getAllArtists() // Ya está configurado en el Facade
+            facade.getAllArtists()
         }
     }
 }

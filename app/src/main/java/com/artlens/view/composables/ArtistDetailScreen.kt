@@ -180,7 +180,7 @@ fun ArtworkCarousel(artworks: List<ArtworkResponse>, onArtworkClick: (Int) -> Un
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()  // Usamos wrapContentHeight para adaptarse al contenido
+            .wrapContentHeight()
     ) {
         items(artworks.take(5)) { artwork ->
             Box(modifier = Modifier.padding(8.dp)) {
@@ -188,11 +188,11 @@ fun ArtworkCarousel(artworks: List<ArtworkResponse>, onArtworkClick: (Int) -> Un
                     painter = rememberImagePainter(data = artwork.fields.image),
                     contentDescription = null,
                     modifier = Modifier
-                        .width(200.dp)  // Ajustamos el ancho de las imágenes
-                        .aspectRatio(3f / 4f)  // Mantén una proporción adecuada (3:4)
+                        .width(200.dp)
+                        .aspectRatio(3f / 4f)
                         .clip(MaterialTheme.shapes.medium)
-                        .clickable { onArtworkClick(artwork.pk) },  // Manejo de clic en la imagen
-                    contentScale = ContentScale.Crop  // Ajustamos para que la imagen llene el espacio sin cortar
+                        .clickable { onArtworkClick(artwork.pk) },
+                    contentScale = ContentScale.Crop
                 )
             }
         }

@@ -79,7 +79,7 @@ fun LikesListScreen(
                             imageUrl = artwork.fields.image
                         ),
                         onClick = { onMuseumClick(artwork.pk) },
-                        onRemoveLike = { likesViewModel.removeLike(artwork.pk) } // Acción para eliminar "like"
+                        onRemoveLike = { likesViewModel.removeLike(artwork.pk) }
                     )
                 }
             }
@@ -91,7 +91,7 @@ fun LikesListScreen(
 fun MuseumLikeCard(
     museum: Recommendations,
     onClick: () -> Unit,
-    onRemoveLike: () -> Unit // Nuevo parámetro para manejar el "dislike"
+    onRemoveLike: () -> Unit
 ) {
     Column(
         modifier = Modifier

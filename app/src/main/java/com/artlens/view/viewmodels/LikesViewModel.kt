@@ -12,7 +12,7 @@ class LikesViewModel(private val facade: ArtlensFacade) : ViewModel() {
     val likedMuseums: LiveData<List<ArtworkResponse>> = _likedMuseums
 
     init {
-        fetchLikedMuseums(userId = 1) // Asumiendo que el ID del usuario es 1
+        fetchLikedMuseums(userId = 1)
     }
 
     fun fetchLikedMuseums(userId: Int) {
@@ -29,7 +29,7 @@ class LikesViewModel(private val facade: ArtlensFacade) : ViewModel() {
         if (user != null) {
             facade.deleteLikeByUser(userId = user, artworkId).observeForever { success ->
                 if (success) {
-                    fetchLikedMuseums(userId = user) // Refresca la lista después de borrar un like
+                    fetchLikedMuseums(userId = user)
                 }
             }
         }

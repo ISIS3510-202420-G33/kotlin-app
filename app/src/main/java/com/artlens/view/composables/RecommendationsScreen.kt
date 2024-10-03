@@ -41,7 +41,7 @@ fun RecommendationsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState()) // Hacemos que toda la pantalla sea scrolleable
+                .verticalScroll(rememberScrollState())
         ) {
             // Barra superior con la flecha atrás y el título centrado
             Row(
@@ -77,8 +77,8 @@ fun RecommendationsScreen(
                     text = "Most Liked Artwork",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center, // Centramos el texto
-                    modifier = Modifier.fillMaxWidth() // Aseguramos que el texto ocupe el ancho completo
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 ArtworkCard(
@@ -105,7 +105,7 @@ fun RecommendationsScreen(
                         artwork = artwork,
                         onClick = {
                             Log.d("RecommendationsScreen", "Clicked on artwork ID: ${artwork.pk}")
-                            onRecommendationClick(artwork.pk)  // Pasamos el ID correcto al click
+                            onRecommendationClick(artwork.pk)
                         }
                     )
                     Spacer(modifier = Modifier.height(16.dp))

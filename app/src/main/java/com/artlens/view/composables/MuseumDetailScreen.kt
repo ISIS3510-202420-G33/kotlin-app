@@ -21,7 +21,7 @@ import com.artlens.data.models.MuseumResponse
 @Composable
 fun MuseumDetailScreen(
     museum: MuseumResponse?,
-    artworkUrls: List<String>, // Añadir las URLs de las obras de arte
+    artworkUrls: List<String>,
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit
 ) {

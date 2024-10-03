@@ -41,7 +41,7 @@ class MuseumsListViewModel(private val facade: ArtlensFacade) : ViewModel() {
                 val distance = distanceBetween(userLat, userLng, it.fields.latitude, it.fields.longitude)
                 Log.d("MuseumsListViewModel", "Distance to museum ${it.fields.name}: $distance")
                 distance
-            }.take(2)
+            }.take(3)
 
             Log.d("MuseumsListViewModel", "Closest museums after sorting: ${sortedMuseums.map { it.fields.name }}")
 

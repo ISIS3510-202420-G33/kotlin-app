@@ -54,7 +54,7 @@ fun MuseumsListScreen(
                         .padding(16.dp) // Add padding to the box
                 ) {
                     Column(
-                        modifier = Modifier.align(Alignment.Center), // Center Column within Box
+                        modifier = Modifier.align(Alignment.Center),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
@@ -65,26 +65,26 @@ fun MuseumsListScreen(
                         )
 
 
-                        Spacer(modifier = Modifier.height(8.dp)) // Add space between the button and the line
+                        Spacer(modifier = Modifier.height(8.dp))
 
                         // Horizontal Divider
                         Divider(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(1.dp)
-                                .background(Color.Black) // Color of the divider
+                                .background(Color.Black)
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
                         // First Option Button
                         Button(
                             onClick = {
-                                onDismissDialog()// Dismiss the dialog It should navigate to favourites page
+                                onDismissDialog()
                                 onViewFavoritesClick() },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp)
-                                .clip(CircleShape), // Set a fixed height for the button
+                                .clip(CircleShape),
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = Color.Transparent,
                                 contentColor = Color.Black
@@ -98,12 +98,12 @@ fun MuseumsListScreen(
                         Button(
                             onClick = {
                                 logOutClick()
-                                onDismissDialog()} // Dismiss the dialog
+                                onDismissDialog()}
                             ,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp)
-                                .clip(CircleShape), // Set a fixed height for the button
+                                .clip(CircleShape),
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = Color.Transparent,
                                 contentColor = Color.Black
@@ -165,7 +165,7 @@ fun MuseumsListScreen(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 70.dp),  // Para dejar espacio a los botones inferiores
+                    .padding(bottom = 70.dp),
                 contentPadding = PaddingValues(8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
