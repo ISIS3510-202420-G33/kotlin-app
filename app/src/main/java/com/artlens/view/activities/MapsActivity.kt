@@ -173,8 +173,7 @@ class MapsActivity : ComponentActivity() {
 
         GoogleMap(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 80.dp),
+                .fillMaxSize(),
             cameraPositionState = cameraPositionState,
             properties = MapProperties(
                 isMyLocationEnabled = true
