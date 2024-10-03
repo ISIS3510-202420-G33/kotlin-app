@@ -30,10 +30,9 @@ import com.artlens.viewmodels.RecommendationsViewModel
 fun RecommendationsScreen(
     onBackClick: () -> Unit,
     onRecommendationClick: (Int) -> Unit,
-    recommendationsViewModel: RecommendationsViewModel, // Recibe el ViewModel como parámetro
+    recommendationsViewModel: RecommendationsViewModel,
     isLoggedIn: Boolean
 ) {
-    // Obtenemos la obra más likeada y las recomendaciones desde el ViewModel
     val mostLikedArtwork by recommendationsViewModel.mostLikedArtwork.observeAsState()
     val recommendations by recommendationsViewModel.recommendations.observeAsState(emptyList())
 
@@ -87,8 +86,6 @@ fun RecommendationsScreen(
                     onClick = { onRecommendationClick(it.pk) }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-            } ?: run {
-                Text(text = "Loading Most Liked Artwork...", fontSize = 16.sp, color = Color.Gray)
             }
 
             // Si el usuario está logueado, mostrar las recomendaciones
@@ -97,8 +94,8 @@ fun RecommendationsScreen(
                     text = "Based on your likes",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center, // Centramos el texto
-                    modifier = Modifier.fillMaxWidth() // Aseguramos que el texto ocupe el ancho completo
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -106,7 +103,10 @@ fun RecommendationsScreen(
                 recommendations.forEach { artwork ->
                     ArtworkCard(
                         artwork = artwork,
-                        onClick = { onRecommendationClick(artwork.pk) }
+                        onClick = {
+                            Log.d("RecommendationsScreen", "Clicked on artwork ID: ${artwork.pk}")
+                            onRecommendationClick(artwork.pk)  // Pasamos el ID correcto al click
+                        }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -123,6 +123,7 @@ fun RecommendationsScreen(
         }
     }
 }
+
 
 @Composable
 fun ArtworkCard(artwork: ArtworkResponse, onClick: () -> Unit) {

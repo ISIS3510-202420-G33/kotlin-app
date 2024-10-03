@@ -38,9 +38,8 @@ class RecommendationsActivity : AppCompatActivity() {
                 onBackClick = { finish() },
                 isLoggedIn = userId >= 0,  // Indicamos si el usuario está logueado o no
                 onRecommendationClick = { artworkId ->
-                    // Acción cuando se selecciona una recomendación
                     val intent = Intent(this, ArtworkDetailActivity::class.java)
-                    intent.putExtra("ARTWORK_ID", artworkId)
+                    intent.putExtra("id", artworkId)
                     startActivity(intent)
                 }
             )
