@@ -5,9 +5,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,23 +23,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.artlens.R
-import com.artlens.view.viewmodels.ArtworkListViewModel
+import com.artlens.data.models.ArtworkResponse
+import com.artlens.viewmodels.RecommendationsViewModel
 
 @Composable
 fun RecommendationsScreen(
     onBackClick: () -> Unit,
     onRecommendationClick: (Int) -> Unit,
-    artworkListViewModel: ArtworkListViewModel // Recibe el ViewModel como parámetro
+    recommendationsViewModel: RecommendationsViewModel,
+    isLoggedIn: Boolean
 ) {
-    // Observa los datos desde el ViewModel
-    val artworks by artworkListViewModel.artworksLiveData.observeAsState(emptyList())
-    Log.d("RecommendationsScreen", "Number of artworks: ${artworks.size}")
+    val mostLikedArtwork by recommendationsViewModel.mostLikedArtwork.observeAsState()
+    val recommendations by recommendationsViewModel.recommendations.observeAsState(emptyList())
 
     Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             // Barra superior con la flecha atrás y el título centrado
             Row(
@@ -50,7 +51,6 @@ fun RecommendationsScreen(
                     .background(Color.White),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Flecha de retroceso alineada a la izquierda
                 IconButton(onClick = onBackClick) {
                     Image(
                         painter = painterResource(id = R.drawable.arrow),
@@ -59,34 +59,66 @@ fun RecommendationsScreen(
                     )
                 }
 
-                // Caja que llena el espacio restante y centra el texto
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(
                         text = "RECOMMENDATIONS",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center // Asegura que el texto esté centrado
+                        textAlign = TextAlign.Center
                     )
                 }
             }
 
-            // Lista de recomendaciones con los datos del backend
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(artworks.take(10)) { artwork ->  // Solo muestra las primeras 5 obras
-                    RecommendationCard(
-                        recommendation = Recommendation(
-                            title = artwork.fields.name,
-                            description = limitWords(artwork.fields.advancedInfo ?: "No description available", 20),
-                            imageUrl = artwork.fields.image,
-                        ),
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Mostrar la obra más likeada si está disponible
+            mostLikedArtwork?.let {
+                Text(
+                    text = "Most Liked Artwork",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                ArtworkCard(
+                    artwork = it,
+                    onClick = { onRecommendationClick(it.pk) }
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            // Si el usuario está logueado, mostrar las recomendaciones
+            if (isLoggedIn) {
+                Text(
+                    text = "Based on your likes",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Mostrar las recomendaciones
+                recommendations.forEach { artwork ->
+                    ArtworkCard(
+                        artwork = artwork,
                         onClick = {
-                            onRecommendationClick(artwork.pk)  // Usa el ID real de la obra
+                            Log.d("RecommendationsScreen", "Clicked on artwork ID: ${artwork.pk}")
+                            onRecommendationClick(artwork.pk)
                         }
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
+            } else {
+                // Mostrar mensaje si el usuario no está logueado
+                Text(
+                    text = "Debes logearte para recibir recomendaciones personalizadas.",
+                    fontSize = 16.sp,
+                    color = Color.Gray,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(top = 24.dp)
+                )
             }
         }
     }
@@ -94,51 +126,45 @@ fun RecommendationsScreen(
 
 
 @Composable
-fun RecommendationCard(recommendation: Recommendation, onClick: () -> Unit) {
-    Column(
+fun ArtworkCard(artwork: ArtworkResponse, onClick: () -> Unit) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .clickable(onClick = onClick),
+        elevation = 4.dp
     ) {
-        Card(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {
-                    Log.d("RecommendationCard", "Card clicked: ${recommendation.title}")
-                    onClick() },  // Hacemos la tarjeta clicable
-            elevation = 4.dp
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
+            // Texto a la izquierda
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .weight(0.6f)
+                    .padding(end = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Texto a la izquierda
-                Column(
-                    modifier = Modifier
-                        .weight(0.6f)
-                        .padding(end = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = recommendation.title,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(bottom = 4.dp)
-                    )
-                    Text(
-                        text = recommendation.description,
-                        fontSize = 14.sp,
-                        color = Color.Gray
-                    )
-                }
+                Text(
+                    text = artwork.fields.name,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                Text(
+                    text = artwork.fields.interpretation,
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
+            }
 
-                // Imagen rectangular a la derecha
+            // Imagen rectangular a la derecha
+            if (artwork.fields.image.isNotBlank()) {
                 Image(
-                    painter = rememberImagePainter(data = recommendation.imageUrl),
-                    contentDescription = recommendation.title,
+                    painter = rememberImagePainter(data = artwork.fields.image),
+                    contentDescription = artwork.fields.name,
                     modifier = Modifier
                         .weight(0.4f)
                         .height(120.dp)  // Ajuste para imagen rectangular
@@ -147,31 +173,6 @@ fun RecommendationCard(recommendation: Recommendation, onClick: () -> Unit) {
                 )
             }
         }
-
-        // Línea divisoria debajo de la tarjeta
-        Divider(
-            color = Color.Black,
-            thickness = 1.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        )
     }
 }
 
-// Modelo de datos para las recomendaciones
-data class Recommendation(
-    val title: String,
-    val description: String,
-    val imageUrl: String
-)
-
-// Función auxiliar para limitar las palabras
-fun limitWords(text: String, wordLimit: Int): String {
-    val words = text.split(" ") // Dividimos el texto en palabras
-    return if (words.size > wordLimit) {
-        words.take(wordLimit).joinToString(" ") + "..." // Limitamos las palabras y añadimos "..."
-    } else {
-        text // Retorna el texto completo si es menor o igual al límite
-    }
-}

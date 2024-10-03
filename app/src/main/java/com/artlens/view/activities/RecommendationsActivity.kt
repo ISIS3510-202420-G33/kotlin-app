@@ -2,39 +2,46 @@ package com.artlens.view.activities
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.artlens.view.composables.RecommendationsScreen
-import com.artlens.view.viewmodels.ArtworkListViewModel
+import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.compose.setContent
 import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.facade.ViewModelFactory
+import com.artlens.utils.UserPreferences
+import com.artlens.viewmodels.RecommendationsViewModel
+import com.artlens.view.composables.RecommendationsScreen
 
-class RecommendationsActivity : ComponentActivity() {
+class RecommendationsActivity : AppCompatActivity() {
 
-    // Obtenemos el ViewModel de la lista de obras de arte
-    private val artworkListViewModel: ArtworkListViewModel by viewModels {
+    private val recommendationsViewModel: RecommendationsViewModel by viewModels {
         ViewModelFactory(FacadeProvider.facade)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Llamamos a la función para obtener todas las obras de arte
-        artworkListViewModel.fetchAllArtworks()
+        // Obtener el userId desde UserPreferences
+        val userId = UserPreferences.getPk() ?: -1
 
+        // Cargar la obra más likeada
+        recommendationsViewModel.fetchMostLikedArtwork()
+
+        if (userId >= 0) {
+            // Usuario logueado: cargar las recomendaciones además de la obra más likeada
+            recommendationsViewModel.fetchArtworkRecommendations(userId)
+        }
+
+        // Establecer el contenido usando Jetpack Compose
         setContent {
             RecommendationsScreen(
-                onBackClick = {
-                    onBackPressed()
-                },
-                onRecommendationClick = { recommendationId ->
-                    // Aquí navegas a la pantalla de detalles
+                recommendationsViewModel = recommendationsViewModel,
+                onBackClick = { finish() },
+                isLoggedIn = userId >= 0,  // Indicamos si el usuario está logueado o no
+                onRecommendationClick = { artworkId ->
                     val intent = Intent(this, ArtworkDetailActivity::class.java)
-                    intent.putExtra("id", recommendationId)  // Pasamos el ID de la obra seleccionada
+                    intent.putExtra("id", artworkId)
                     startActivity(intent)
-                },
-                artworkListViewModel = artworkListViewModel
+                }
             )
         }
     }

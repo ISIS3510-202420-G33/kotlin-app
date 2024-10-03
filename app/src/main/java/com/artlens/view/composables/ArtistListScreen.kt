@@ -7,17 +7,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -26,97 +20,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.artlens.R
-import com.artlens.data.models.MuseumResponse
-import com.artlens.utils.UserPreferences
+import com.artlens.data.models.ArtistResponse
 
 @Composable
-fun MuseumsListScreen(
-    museums: List<MuseumResponse>,
+fun ArtistListScreen(
+    artists: List<ArtistResponse>,
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
-    onCameraClick:() -> Unit,
     onRecommendationClick: () -> Unit,
-    onUserClick: () -> Unit,
-    showDialog: Boolean,
-    onDismissDialog: () -> Unit,
-    logOutClick: () -> Unit,
-    onViewFavoritesClick: () -> Unit,
-    onMuseumClick: (Int) -> Unit
+    onArtistClick: (Int) -> Unit
 ) {
-
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = onDismissDialog,
-            buttons = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp) // Add padding to the box
-                ) {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        Text(
-                            text = "Hi ${UserPreferences.getUsername()}",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        // Horizontal Divider
-                        Divider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(1.dp)
-                                .background(Color.Black)
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-                        // First Option Button
-                        Button(
-                            onClick = {
-                                onDismissDialog()
-                                onViewFavoritesClick() },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .clip(CircleShape),
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color.Transparent,
-                                contentColor = Color.Black
-                            ),
-                            elevation = ButtonDefaults.elevation(0.dp)
-                        ) {
-                            Text("View Favorites")
-                        }
-
-                        // Second Option Button
-                        Button(
-                            onClick = {
-                                logOutClick()
-                                onDismissDialog()}
-                            ,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .clip(CircleShape),
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color.Transparent,
-                                contentColor = Color.Black
-                            ),
-                            elevation = ButtonDefaults.elevation(0.dp)
-                        ) {
-                            Text("Log Out")
-                        }
-                    }
-                }
-            }
-        )
-    }
     Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
         Column(
             modifier = Modifier
@@ -143,13 +56,13 @@ fun MuseumsListScreen(
 
                 // Título centrado
                 Text(
-                    text = "MUSEUMS",
+                    text = "ARTISTS",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
 
                 // Icono de perfil a la derecha
-                IconButton(onClick = onUserClick) {
+                IconButton(onClick = { /* Acción de perfil */ }) {
                     Image(
                         painter = painterResource(id = R.drawable.profile),
                         contentDescription = "Profile Icon",
@@ -160,18 +73,18 @@ fun MuseumsListScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Grid de museos con dos columnas
+            // Grid de artistas con dos columnas
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 70.dp),
+                    .padding(bottom = 70.dp),  // Para dejar espacio a los botones inferiores
                 contentPadding = PaddingValues(8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(museums) { museum ->
-                    MuseumItem(museum = museum, onClick = { onMuseumClick(museum.pk) })
+                items(artists) { artist ->
+                    ArtistItem(artist = artist, onClick = { onArtistClick(artist.pk) })
                 }
             }
         }
@@ -195,7 +108,7 @@ fun MuseumsListScreen(
                 )
             }
 
-            IconButton(onClick = onCameraClick) {
+            IconButton(onClick = { /* Acción para ir a Museos */ }) {
                 Image(
                     painter = painterResource(id = R.drawable.camera),
                     contentDescription = "Museos",
@@ -215,16 +128,16 @@ fun MuseumsListScreen(
 }
 
 @Composable
-fun MuseumItem(museum: MuseumResponse, onClick: () -> Unit) {
+fun ArtistItem(artist: ArtistResponse, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
     ) {
-        // Imagen del museo
+        // Imagen del artista
         Image(
-            painter = rememberImagePainter(data = museum.fields.image),
-            contentDescription = museum.fields.name,
+            painter = rememberImagePainter(data = artist.fields.image),
+            contentDescription = artist.fields.name,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp),
@@ -233,11 +146,13 @@ fun MuseumItem(museum: MuseumResponse, onClick: () -> Unit) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Nombre del museo
+        // Nombre del artista
         Text(
-            text = museum.fields.name,
+            text = artist.fields.name,
             modifier = Modifier.fillMaxWidth(),
+            fontWeight = FontWeight.Bold,
             maxLines = 1
         )
     }
 }
+

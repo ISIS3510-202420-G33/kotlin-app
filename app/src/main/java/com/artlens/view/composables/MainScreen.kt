@@ -30,10 +30,10 @@ import com.artlens.utils.UserPreferences
 
 @Composable
 fun MainScreen(
-    imageUrls: List<String>,  // Recibe las imágenes del backend
-    museumIds: List<Int>,  // Lista de IDs de museos para redirigir a los detalles
+    imageUrls: List<String>,
+    museumIds: List<Int>,
     onMapClick: () -> Unit,
-    onMuseumClick: (Int) -> Unit,  // Recibe el ID del museo clicado
+    onMuseumClick: (Int) -> Unit,
     onRecommendationClick: () -> Unit,
     onArtistClick: () -> Unit,
     onBackClick: () -> Unit,
@@ -48,16 +48,17 @@ fun MainScreen(
 ) {
 
     if (showDialog) {
+        
         AlertDialog(
             onDismissRequest = onDismissDialog,
             buttons = {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp) // Add padding to the box
+                        .padding(16.dp)
                 ) {
                     Column(
-                        modifier = Modifier.align(Alignment.Center), // Center Column within Box
+                        modifier = Modifier.align(Alignment.Center),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
@@ -68,26 +69,26 @@ fun MainScreen(
                         )
 
 
-                        Spacer(modifier = Modifier.height(8.dp)) // Add space between the button and the line
+                        Spacer(modifier = Modifier.height(8.dp))
 
                         // Horizontal Divider
                         Divider(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(1.dp)
-                                .background(Color.Black) // Color of the divider
+                                .background(Color.Black)
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
                         // First Option Button
                         Button(
                             onClick = {
-                                onDismissDialog()// Dismiss the dialog It should navigate to favourites page
+                                onDismissDialog()
                                 onViewFavoritesClick() },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp)
-                                .clip(CircleShape), // Set a fixed height for the button
+                                .clip(CircleShape),
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = Color.Transparent,
                                 contentColor = Color.Black
@@ -101,12 +102,12 @@ fun MainScreen(
                         Button(
                             onClick = {
                                 logOutClick()
-                                onDismissDialog()} // Dismiss the dialog
+                                onDismissDialog()}
                             ,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp)
-                                .clip(CircleShape), // Set a fixed height for the button
+                                .clip(CircleShape),
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = Color.Transparent,
                                 contentColor = Color.Black
@@ -195,18 +196,10 @@ fun MainScreen(
             // Carrusel de imágenes con URLs e IDs del backend
             MuseumImageCarousel(imageUrls = imageUrls, onMuseumClick = onMuseumClick, museumIds = museumIds)
 
-            // Título centrado
-            Spacer(modifier = Modifier.height(50.dp))
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = "The most view artwork until today is: La Gioconda with 30 likes",
-                    fontSize = 15.sp,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                )
-            }
+
 
             // Botones de acción
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(100.dp))
             Button(
                 onClick = { onMuseumsClick() },
                 modifier = Modifier.fillMaxWidth(),

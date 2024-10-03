@@ -8,6 +8,7 @@ import com.artlens.data.models.CommentResponse
 import com.artlens.data.models.CreateUserResponse
 import com.artlens.data.models.MuseumResponse
 import com.artlens.data.models.UserResponse
+import com.artlens.data.services.AnalyticsService
 import com.artlens.data.services.ArtistService
 import com.artlens.data.services.ArtworkService
 import com.artlens.data.services.CommentService
@@ -19,7 +20,8 @@ class Facade(
     private val artworkService: ArtworkService,
     private val museumService: MuseumService,
     private val userService: UserService,
-    private val commentService: CommentService
+    private val commentService: CommentService,
+    private val analyticsService: AnalyticsService
 ) : ArtlensFacade {
 
     //ArtistService
@@ -87,5 +89,14 @@ class Facade(
 
     override fun getCommentsByArtwork(artworkId: Int): LiveData<List<CommentResponse>> {
         return commentService.getCommentsByArtwork(artworkId)
+    }
+
+    //Analytics
+    override fun getArtworkMostLikedMonth(): LiveData<ArtworkResponse> {
+        return analyticsService.getArtworkMostLikedMonth()
+    }
+
+    override fun getArtworkRecommendation(userId: Int): LiveData<List<ArtworkResponse>> {
+        return analyticsService.getArtworkRecommendation(userId)
     }
 }
