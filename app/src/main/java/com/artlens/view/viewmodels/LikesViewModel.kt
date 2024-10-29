@@ -11,10 +11,6 @@ class LikesViewModel(private val facade: ArtlensFacade) : ViewModel() {
     private val _likedMuseums = MutableLiveData<List<ArtworkResponse>>()
     val likedMuseums: LiveData<List<ArtworkResponse>> = _likedMuseums
 
-    init {
-        fetchLikedMuseums(userId = 1)
-    }
-
     fun fetchLikedMuseums(userId: Int) {
         facade.getLikesByUser(userId).observeForever { likedArtworks ->
             val museums = likedArtworks.filter { it.fields.museum > 0 }
