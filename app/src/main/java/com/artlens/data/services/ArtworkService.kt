@@ -4,20 +4,39 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.artlens.data.api.ArtworkApi
+import com.artlens.data.cache.ArtworkCache
 import com.artlens.data.models.ArtworkResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ArtworkService(private val artworkApi: ArtworkApi) {
+class ArtworkService(private val artworkApi: ArtworkApi, private val cache: ArtworkCache) {
 
     fun getArtworkDetail(artworkId: Int): LiveData<ArtworkResponse> {
         val artworkLiveData = MutableLiveData<ArtworkResponse>()
 
+
+        // Check the cache first
+        cache.get(artworkId)?.let {
+            // Return cached data if available
+
+            Log.e("AAAAAAAAAAAAAAAAAAAAAAAA", "Cache utilizadoooo")
+            artworkLiveData.value = it
+            return artworkLiveData
+        }
+
+
+        // If not cached, proceed with network request
         artworkApi.getArtworkDetail(artworkId).enqueue(object : Callback<List<ArtworkResponse>> {
             override fun onResponse(call: Call<List<ArtworkResponse>>, response: Response<List<ArtworkResponse>>) {
                 if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
-                    artworkLiveData.value = response.body()?.first()
+                    val artwork = response.body()?.first()
+
+                    // Save to cache and update LiveData
+                    if (artwork != null) {
+                        cache.put(artworkId, artwork)
+                        artworkLiveData.value = artwork
+                    }
                 } else {
                     Log.e("ArtworkService", "Error: ${response.errorBody()?.string()}")
                 }

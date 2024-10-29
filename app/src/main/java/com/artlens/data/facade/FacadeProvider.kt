@@ -6,6 +6,7 @@ import com.artlens.data.api.ArtworkApi
 import com.artlens.data.api.CommentApi
 import com.artlens.data.api.MuseumApi
 import com.artlens.data.api.UserApi
+import com.artlens.data.cache.ArtworkCache
 import com.artlens.data.services.AnalyticsService
 import com.artlens.data.services.ArtistService
 import com.artlens.data.services.ArtworkService
@@ -22,8 +23,10 @@ object FacadeProvider {
     private val commentApi = RetrofitClient.createService(CommentApi::class.java)
     private val analyticsApi = RetrofitClient.createService(AnalyticsApi::class.java)
 
+    private val artworkCache = ArtworkCache()
+
     private val artistService = ArtistService(artistApi)
-    private val artworkService = ArtworkService(artworkApi)
+    private val artworkService = ArtworkService(artworkApi, artworkCache)
     private val museumService = MuseumService(museumApi)
     private val userService = UserService(userApi)
     private val commentService = CommentService(commentApi)
