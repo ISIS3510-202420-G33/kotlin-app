@@ -108,4 +108,5 @@ dependencies {
     implementation ("androidx.camera:camera-camera2:1.1.0-alpha05")
     implementation ("androidx.camera:camera-lifecycle:1.1.0-alpha05")
     implementation ("androidx.camera:camera-view:1.0.0-alpha28")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.5.0")
 }

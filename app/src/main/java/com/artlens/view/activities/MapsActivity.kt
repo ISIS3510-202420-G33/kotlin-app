@@ -1,6 +1,7 @@
 package com.artlens.view.activities
 
 import android.Manifest
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -29,11 +30,19 @@ import com.artlens.view.viewmodels.MuseumsListViewModel
 import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.facade.ViewModelFactory
 import com.artlens.data.models.MuseumResponse
+import com.artlens.view.composables.NoInternetScreen
+import com.artlens.data.services.NetworkUtils
+import com.artlens.data.services.NetworkReceiver
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.*
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
+import android.net.ConnectivityManager
 
 class MapsActivity : ComponentActivity() {
 
@@ -44,6 +53,9 @@ class MapsActivity : ComponentActivity() {
 
     private var userLat: Double = 4.60971 // Valor por defecto (Bogotá)
     private var userLng: Double = -74.08175 // Valor por defecto (Bogotá)
+
+    private lateinit var networkReceiver: NetworkReceiver
+    private var isConnected by mutableStateOf(true)
 
     // Registrar la solicitud de permisos
     private val requestPermissionLauncher = registerForActivityResult(
@@ -61,10 +73,28 @@ class MapsActivity : ComponentActivity() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        // Comenzar el mapa
+        // Configurar el BroadcastReceiver para monitorear la conexión a internet
+        networkReceiver = NetworkReceiver { isConnected = it }
+        registerReceiver(networkReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+
         setContent {
-            MapScreen()
+            // Verificar el estado de conexión al iniciar
+            LaunchedEffect(Unit) {
+                isConnected = NetworkUtils.isInternetAvailable(this@MapsActivity)
+            }
+
+            if (isConnected) {
+                MapScreen()
+            } else {
+                NoInternetScreen()
+            }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Desregistrar el BroadcastReceiver para evitar fugas de memoria
+        unregisterReceiver(networkReceiver)
     }
 
     @Composable
@@ -94,11 +124,9 @@ class MapsActivity : ComponentActivity() {
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED -> {
-                // El permiso ya está concedido
                 getLastLocation()
             }
             else -> {
-                // Solicitar el permiso
                 requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             }
         }
@@ -115,7 +143,6 @@ class MapsActivity : ComponentActivity() {
                 location?.let {
                     userLat = it.latitude
                     userLng = it.longitude
-                    // Actualizar los museos cercanos una vez que se obtiene la ubicación
                     museumsViewModel.getClosestMuseums(userLat, userLng)
                 }
             }
@@ -137,7 +164,6 @@ class MapsActivity : ComponentActivity() {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Flecha de retroceso
                 IconButton(onClick = { onBackPressed() }) {
                     Image(
                         painter = painterResource(id = R.drawable.arrow),
@@ -146,21 +172,19 @@ class MapsActivity : ComponentActivity() {
                     )
                 }
 
-                // Título centrado
                 Text(
                     text = "HOME",
                     fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold)
+                    fontWeight = FontWeight.Bold
+                )
 
-                // Icono de perfil a la derecha
-                    IconButton(onClick = {}) {
-                        Image(
-                            painter = painterResource(id = R.drawable.profile),
-                            contentDescription = "Profile Icon",
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-
+                IconButton(onClick = {}) {
+                    Image(
+                        painter = painterResource(id = R.drawable.profile),
+                        contentDescription = "Profile Icon",
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
             }
         }
     }
@@ -172,12 +196,9 @@ class MapsActivity : ComponentActivity() {
         }
 
         GoogleMap(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            properties = MapProperties(
-                isMyLocationEnabled = true
-            )
+            properties = MapProperties(isMyLocationEnabled = true)
         ) {
             museums.forEach { museum ->
                 val museumLocation = LatLng(museum.fields.latitude, museum.fields.longitude)
