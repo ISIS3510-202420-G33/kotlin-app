@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,6 +41,7 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.delay
 import android.net.ConnectivityManager
 
 class MapsActivity : ComponentActivity() {
@@ -57,12 +57,11 @@ class MapsActivity : ComponentActivity() {
     private lateinit var networkReceiver: NetworkReceiver
     private var isConnected by mutableStateOf(true)
 
-    // Registrar la solicitud de permisos
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            getLastLocation()  // Obtener ubicación si el permiso es concedido
+            updateLocationAndMuseums()
         } else {
             Log.w("MapsActivity", "Permiso de ubicación denegado")
         }
@@ -93,21 +92,24 @@ class MapsActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Desregistrar el BroadcastReceiver para evitar fugas de memoria
         unregisterReceiver(networkReceiver)
     }
 
     @Composable
     fun MapScreen() {
         val context = LocalContext.current
+        var closestMuseums by remember { mutableStateOf(emptyList<MuseumResponse>()) }
 
-        // Pedir permisos al inicializar el Composable
+        // Pedir permisos y actualizar ubicación y museos cada 10 segundos
         LaunchedEffect(Unit) {
             checkAndRequestLocationPermission(context)
+            while (true) {
+                updateLocationAndMuseums { updatedMuseums ->
+                    closestMuseums = updatedMuseums
+                }
+                delay(10000) // Esperar 10 segundos antes de la próxima actualización
+            }
         }
-
-        // Obtener los museos cercanos basados en la ubicación actual
-        val closestMuseums by museumsViewModel.getClosestMuseums(userLat, userLng).observeAsState(emptyList())
 
         // Pantalla del mapa
         Box(modifier = Modifier.fillMaxSize()) {
@@ -124,7 +126,7 @@ class MapsActivity : ComponentActivity() {
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED -> {
-                getLastLocation()
+                updateLocationAndMuseums { }
             }
             else -> {
                 requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -132,8 +134,8 @@ class MapsActivity : ComponentActivity() {
         }
     }
 
-    // Obtener la última ubicación conocida del usuario
-    private fun getLastLocation() {
+    // Actualizar ubicación y lista de museos cercanos
+    private fun updateLocationAndMuseums(onMuseumsUpdated: (List<MuseumResponse>) -> Unit = {}) {
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -143,7 +145,9 @@ class MapsActivity : ComponentActivity() {
                 location?.let {
                     userLat = it.latitude
                     userLng = it.longitude
-                    museumsViewModel.getClosestMuseums(userLat, userLng)
+                    museumsViewModel.getClosestMuseums(userLat, userLng).observe(this) { museums ->
+                        onMuseumsUpdated(museums)
+                    }
                 }
             }
         }

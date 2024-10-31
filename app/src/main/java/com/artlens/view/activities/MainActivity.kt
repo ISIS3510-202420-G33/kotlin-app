@@ -1,30 +1,23 @@
 package com.artlens.view.activities
 
-import android.Manifest
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.widget.Toast
+import android.net.ConnectivityManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.*
-import androidx.core.content.ContextCompat
 import com.artlens.view.composables.MainScreen
 import com.artlens.view.composables.NoInternetScreen
 import com.artlens.view.viewmodels.MuseumsListViewModel
 import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.facade.ViewModelFactory
 import com.artlens.utils.UserPreferences
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.artlens.data.services.NetworkUtils
 import com.artlens.data.services.NetworkReceiver
 import androidx.compose.runtime.livedata.observeAsState
-
 
 class MainActivity : ComponentActivity() {
 
@@ -32,27 +25,11 @@ class MainActivity : ComponentActivity() {
         ViewModelFactory(FacadeProvider.facade)
     }
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var userLat: Double? = null
-    private var userLng: Double? = null
     private lateinit var networkReceiver: NetworkReceiver
     private var isConnected by mutableStateOf(true)
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            preLoadMap()
-        } else {
-            Toast.makeText(this, "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-        checkAndRequestLocationPermission()
 
         // Inicializar el BroadcastReceiver para monitorear la conexión a internet
         networkReceiver = NetworkReceiver { isConnected = it }
@@ -78,9 +55,6 @@ class MainActivity : ComponentActivity() {
                     museumIds = museumIds,
                     onMapClick = {
                         val intent = Intent(this, MapsActivity::class.java)
-                        userLat?.let { intent.putExtra("latitude", it) }
-                        userLng?.let { intent.putExtra("longitude", it) }
-                        intent.putExtra("zoom", 12f)
                         startActivity(intent)
                     },
                     onMuseumClick = { museumId ->
@@ -111,7 +85,7 @@ class MainActivity : ComponentActivity() {
                     logOutClick = { UserPreferences.clearUserData() },
                     onUserClick = {
                         val pk = UserPreferences.getPk()
-                        if (pk!! >= 0) {
+                        if (pk != null && pk >= 0) {
                             showDialog = true
                         } else {
                             val intent = Intent(this, LogInActivity::class.java)
@@ -134,34 +108,5 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         // Desregistrar el BroadcastReceiver para evitar fugas de memoria
         unregisterReceiver(networkReceiver)
-    }
-
-    private fun checkAndRequestLocationPermission() {
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                preLoadMap()
-            }
-            else -> {
-                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-            }
-        }
-    }
-
-    private fun preLoadMap() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                location?.let {
-                    userLat = it.latitude
-                    userLng = it.longitude
-                }
-            }
-        }
     }
 }
