@@ -1,6 +1,7 @@
 package com.artlens.view.activities
 
 import android.annotation.SuppressLint
+import androidx.compose.ui.unit.dp
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Build
@@ -10,9 +11,11 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier // Import correcto para Modifier
 import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.facade.ViewModelFactory
 import com.artlens.utils.UserPreferences
@@ -32,19 +35,13 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private lateinit var tts: TextToSpeech
     private var isSpeaking by mutableStateOf(false)
 
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Inicializamos TTS
         tts = TextToSpeech(this, this)
-
-        // Obtener el ID de la obra que queremos mostrar
         val artworkId = intent.getIntExtra("id", 2)
+        val userId = UserPreferences.getPk() ?: -1
 
-        var userId = UserPreferences.getPk() ?: -1
-
-        // Llamamos al ViewModel para obtener los detalles de la obra de arte
         artworkViewModel.fetchArtworkDetail(artworkId, userId)
 
         setContent {
@@ -60,7 +57,8 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                 }
             }
 
-            Scaffold {
+            Scaffold { paddingValues ->
+                // Pasar paddingValues a ArtworkDetailScreen para que use el espacio de manera adecuada
                 ArtworkDetailScreen(
                     artwork = artworkState,
                     isLiked = isLiked,
@@ -80,23 +78,21 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                     onInterpretationSpeakClick = { interpretation ->
                         toggleTTS(interpretation)
                     },
-                    onCrashButtonClick = { simulateCrash() } // Llamada al método simulateCrash
+                    onCrashButtonClick = { registerCrash() },
+                    modifier = Modifier.padding(paddingValues) // Añadir el padding aquí
                 )
             }
         }
     }
 
-    // Función para simular un crash y enviar el reporte a Firebase
-    private fun simulateCrash() {
+    private fun registerCrash() {
         val db = Firebase.firestore
-        val androidVersion = Build.VERSION.RELEASE
-
         val crashData = hashMapOf(
             "crashCount" to Timestamp.now(),
-            "androidVersion" to androidVersion
+            "androidVersion" to Build.VERSION.RELEASE
         )
 
-        db.collection("BQ11")
+        db.collection("BQ11")  // Colección para registrar crashes
             .add(crashData)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "Crash report added with ID: ${documentReference.id}")
@@ -105,8 +101,8 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                 Log.w(TAG, "Error adding crash report", e)
             }
 
-        // Simulación del crash
-        throw RuntimeException("Crash Simulation Button Pressed")
+        // Simulación de un crash para pruebas
+        throw RuntimeException("Simulated crash for testing")
     }
 
     // Inicializar el Text-to-Speech

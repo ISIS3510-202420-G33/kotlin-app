@@ -29,6 +29,20 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
 @Composable
+fun ForumEntry(userName: String, comment: String) {
+    Column {
+        Text(text = userName, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+        Text(
+            text = comment,
+            style = MaterialTheme.typography.body2,
+            modifier = Modifier.padding(start = 8.dp)
+        )
+        Divider(color = Color.Black, thickness = 1.dp)
+    }
+}
+
+
+@Composable
 fun ArtworkDetailScreen(
     artwork: ArtworkResponse?,
     isLiked: Boolean,
@@ -38,32 +52,32 @@ fun ArtworkDetailScreen(
     onLikeClick: () -> Unit,
     onMoreInfoClick: (Int) -> Unit,
     onInterpretationSpeakClick: (String) -> Unit,
-    onCrashButtonClick: () -> Unit // Nueva función para el botón de crash
+    onCrashButtonClick: () -> Unit,
+    modifier: Modifier = Modifier // Nuevo parámetro para el modifier
 ) {
-    val context = LocalContext.current
+    Box(modifier = modifier.fillMaxSize()) {
+        val context = LocalContext.current
 
-    // Color personalizado para la estrella de "like"
-    val likedColor = Color(red = 160, green = 82, blue = 45)
+        // Color personalizado para la estrella de "like"
+        val likedColor = Color(red = 160, green = 82, blue = 45)
 
-    var newComment by remember { mutableStateOf("") }
-    var comments by remember {
-        mutableStateOf(
-            listOf(
-                "Santi2001: Nice artwork!!",
-                "ArtLover287: Overrated :c",
-                "Usuario123: Give us your opinion"
+        var newComment by remember { mutableStateOf("") }
+        var comments by remember {
+            mutableStateOf(
+                listOf(
+                    "Santi2001: Nice artwork!!",
+                    "ArtLover287: Overrated :c",
+                    "Usuario123: Give us your opinion"
+                )
             )
-        )
-    }
+        }
 
-    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-
 
             // Barra superior con la flecha atrás y el título centrado
             Row(
@@ -276,18 +290,5 @@ fun ArtworkDetailScreen(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun ForumEntry(userName: String, comment: String) {
-    Column {
-        Text(text = userName, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-        Text(
-            text = comment,
-            style = MaterialTheme.typography.body2,
-            modifier = Modifier.padding(start = 8.dp)
-        )
-        Divider(color = Color.Black, thickness = 1.dp)
     }
 }
