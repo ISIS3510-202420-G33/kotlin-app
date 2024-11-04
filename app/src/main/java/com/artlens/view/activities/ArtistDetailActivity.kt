@@ -9,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import com.artlens.data.facade.FacadeProvider
-import com.artlens.data.facade.ViewModelFactory
+import com.artlens.view.viewmodels.ViewModelFactory
 import com.artlens.view.composables.ArtistDetailScreen
 import com.artlens.view.viewmodels.ArtistViewModel
 import com.artlens.view.viewmodels.ArtworkListViewModel

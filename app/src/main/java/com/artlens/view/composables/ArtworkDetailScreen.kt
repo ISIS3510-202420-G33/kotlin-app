@@ -29,39 +29,56 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
 @Composable
+fun ForumEntry(userName: String, comment: String) {
+    Column {
+        Text(text = userName, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+        Text(
+            text = comment,
+            style = MaterialTheme.typography.body2,
+            modifier = Modifier.padding(start = 8.dp)
+        )
+        Divider(color = Color.Black, thickness = 1.dp)
+    }
+}
+
+
+@Composable
 fun ArtworkDetailScreen(
     artwork: ArtworkResponse?,
     isLiked: Boolean,
     artistName: String?,
-    isSpeaking: Boolean,  // Añadimos el estado para saber si el TTS está hablando
+    isSpeaking: Boolean,
     onBackClick: () -> Unit,
     onLikeClick: () -> Unit,
     onMoreInfoClick: (Int) -> Unit,
-    onInterpretationSpeakClick: (String) -> Unit
+    onInterpretationSpeakClick: (String) -> Unit,
+    onCrashButtonClick: () -> Unit,
+    modifier: Modifier = Modifier // Nuevo parámetro para el modifier
 ) {
-    val context = LocalContext.current
+    Box(modifier = modifier.fillMaxSize()) {
+        val context = LocalContext.current
 
-    // Definir el color personalizado para la estrella
-    val likedColor = Color(red = 160, green = 82, blue = 45)
+        // Color personalizado para la estrella de "like"
+        val likedColor = Color(red = 160, green = 82, blue = 45)
 
-    var newComment by remember { mutableStateOf("") }
-    var comments by remember {
-        mutableStateOf(
-            listOf(
-                "Santi2001: Nice artwork!!",
-                "ArtLover287: Overrated :c",
-                "Usuario123: Give us your opinion"
+        var newComment by remember { mutableStateOf("") }
+        var comments by remember {
+            mutableStateOf(
+                listOf(
+                    "Santi2001: Nice artwork!!",
+                    "ArtLover287: Overrated :c",
+                    "Usuario123: Give us your opinion"
+                )
             )
-        )
-    }
+        }
 
-    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
+
             // Barra superior con la flecha atrás y el título centrado
             Row(
                 modifier = Modifier
@@ -71,7 +88,6 @@ fun ArtworkDetailScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Flecha de retroceso
                 IconButton(onClick = onBackClick) {
                     Image(
                         painter = painterResource(id = R.drawable.arrow),
@@ -80,7 +96,6 @@ fun ArtworkDetailScreen(
                     )
                 }
 
-                // Título centrado
                 Text(
                     text = "ARTWORK",
                     fontSize = 24.sp,
@@ -89,7 +104,6 @@ fun ArtworkDetailScreen(
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
 
-                // Icono de perfil
                 IconButton(onClick = { /* Acción de perfil */ }) {
                     Image(
                         painter = painterResource(id = R.drawable.profile),
@@ -144,23 +158,28 @@ fun ArtworkDetailScreen(
 
                 // Artista y Técnica
                 Text(
-                    text = "Artist: ${artistName ?: "Loading..."}",  // Mostrar el nombre del artista
+                    text = "Artist: ${artistName ?: "Loading..."}",
                     style = MaterialTheme.typography.body1
                 )
                 Text(text = "Technique: ${it.fields.technique}", style = MaterialTheme.typography.body1)
-
-                // Interpretación
-                Text(
-                    text = "Interpretations: ${it.fields.interpretation}",
-                    style = MaterialTheme.typography.body1
-                )
-
-                /*Text(
-                    text = "Advance Information: ${it.fields.advancedInfo}",
-                    style = MaterialTheme.typography.body1
-                )*/
+                Text(text = "Interpretations: ${it.fields.interpretation}", style = MaterialTheme.typography.body1)
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                // Botón para simular el crash, centrado en la parte superior
+                Button(
+                    onClick = { onCrashButtonClick() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                        .align(Alignment.CenterHorizontally),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Red,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Crash App Simulation")
+                }
 
                 // Ícono de audio dinámico (Headphones o Pause)
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -171,11 +190,11 @@ fun ArtworkDetailScreen(
                     ) {
                         Icon(
                             painter = if (isSpeaking) {
-                                painterResource(id = R.drawable.pause)  // Cambia el ícono cuando está hablando
+                                painterResource(id = R.drawable.pause)
                             } else {
-                                painterResource(id = R.drawable.headphones)  // Ícono de headphones cuando no está hablando
+                                painterResource(id = R.drawable.headphones)
                             },
-                            contentDescription = if (isSpeaking) "Pause Audio" else "Start Audio",  // Descripción dinámica
+                            contentDescription = if (isSpeaking) "Pause Audio" else "Start Audio",
                             modifier = Modifier.size(40.dp)
                         )
                     }
@@ -188,7 +207,6 @@ fun ArtworkDetailScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Botón de ver más detalles
                 Button(
                     onClick = { onMoreInfoClick(it.fields.artist) },
                     modifier = Modifier.fillMaxWidth(),
@@ -237,7 +255,7 @@ fun ArtworkDetailScreen(
             }
         }
 
-        // Barra de navegación inferior sobrepuesta
+        // Barra de navegación inferior
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -272,18 +290,5 @@ fun ArtworkDetailScreen(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun ForumEntry(userName: String, comment: String) {
-    Column {
-        Text(text = userName, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-        Text(
-            text = comment,
-            style = MaterialTheme.typography.body2,
-            modifier = Modifier.padding(start = 8.dp)
-        )
-        Divider(color = Color.Black, thickness = 1.dp)
     }
 }

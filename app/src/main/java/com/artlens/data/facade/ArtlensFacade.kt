@@ -38,6 +38,6 @@ interface ArtlensFacade {
     fun getCommentsByArtwork(artworkId: Int): LiveData<List<CommentResponse>>
 
     //Analytics
-    fun getArtworkMostLikedMonth(): LiveData<ArtworkResponse>
-    fun getArtworkRecommendation(userId: Int): LiveData<List<ArtworkResponse>>
+    suspend fun getArtworkMostLikedMonth(): ArtworkResponse?
+    suspend fun getArtworkRecommendation(userId: Int): List<ArtworkResponse>
 }
