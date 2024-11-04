@@ -11,7 +11,7 @@ import com.artlens.view.composables.MuseumsListScreen
 import com.artlens.view.composables.NoInternetScreen
 import com.artlens.view.viewmodels.MuseumsListViewModel
 import com.artlens.data.facade.FacadeProvider
-import com.artlens.data.facade.ViewModelFactory
+import com.artlens.view.viewmodels.ViewModelFactory
 import com.artlens.utils.UserPreferences
 import com.artlens.data.services.NetworkUtils
 import com.artlens.data.services.NetworkReceiver

@@ -1,7 +1,5 @@
 package com.artlens.view.activities
 
-import android.annotation.SuppressLint
-import androidx.compose.ui.unit.dp
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Build
@@ -17,7 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier // Import correcto para Modifier
 import com.artlens.data.facade.FacadeProvider
-import com.artlens.data.facade.ViewModelFactory
+import com.artlens.view.viewmodels.ViewModelFactory
 import com.artlens.utils.UserPreferences
 import com.artlens.view.viewmodels.ArtworkViewModel
 import com.artlens.view.composables.ArtworkDetailScreen

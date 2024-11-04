@@ -92,11 +92,11 @@ class Facade(
     }
 
     //Analytics
-    override fun getArtworkMostLikedMonth(): LiveData<ArtworkResponse> {
+    override suspend fun getArtworkMostLikedMonth(): ArtworkResponse? {
         return analyticsService.getArtworkMostLikedMonth()
     }
 
-    override fun getArtworkRecommendation(userId: Int): LiveData<List<ArtworkResponse>> {
+    override suspend fun getArtworkRecommendation(userId: Int): List<ArtworkResponse> {
         return analyticsService.getArtworkRecommendation(userId)
     }
 }

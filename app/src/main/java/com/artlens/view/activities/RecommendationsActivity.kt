@@ -6,7 +6,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import com.artlens.data.facade.FacadeProvider
-import com.artlens.data.facade.ViewModelFactory
+import com.artlens.view.viewmodels.ViewModelFactory
 import com.artlens.utils.UserPreferences
 import com.artlens.viewmodels.RecommendationsViewModel
 import com.artlens.view.composables.RecommendationsScreen

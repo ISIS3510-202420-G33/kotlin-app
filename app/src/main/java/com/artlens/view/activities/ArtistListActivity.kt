@@ -11,7 +11,7 @@ import com.artlens.view.composables.ArtistListScreen
 import com.artlens.view.composables.NoInternetScreen
 import com.artlens.view.viewmodels.ArtistListViewModel
 import com.artlens.data.facade.FacadeProvider
-import com.artlens.data.facade.ViewModelFactory
+import com.artlens.view.viewmodels.ViewModelFactory
 import com.artlens.data.services.NetworkUtils
 import com.artlens.data.services.NetworkReceiver
 import android.net.ConnectivityManager

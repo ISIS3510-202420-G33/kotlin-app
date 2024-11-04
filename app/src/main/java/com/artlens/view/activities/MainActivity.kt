@@ -3,7 +3,6 @@ package com.artlens.view.activities
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.widget.Toast
 import android.net.ConnectivityManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,7 +12,7 @@ import com.artlens.view.composables.MainScreen
 import com.artlens.view.composables.NoInternetScreen
 import com.artlens.view.viewmodels.MuseumsListViewModel
 import com.artlens.data.facade.FacadeProvider
-import com.artlens.data.facade.ViewModelFactory
+import com.artlens.view.viewmodels.ViewModelFactory
 import com.artlens.utils.UserPreferences
 import com.artlens.data.services.NetworkUtils
 import com.artlens.data.services.NetworkReceiver

@@ -27,7 +27,7 @@ import androidx.core.content.ContextCompat
 import com.artlens.R
 import com.artlens.view.viewmodels.MuseumsListViewModel
 import com.artlens.data.facade.FacadeProvider
-import com.artlens.data.facade.ViewModelFactory
+import com.artlens.view.viewmodels.ViewModelFactory
 import com.artlens.data.models.MuseumResponse
 import com.artlens.view.composables.NoInternetScreen
 import com.artlens.data.services.NetworkUtils

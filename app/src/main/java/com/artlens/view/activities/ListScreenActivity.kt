@@ -10,7 +10,7 @@ import androidx.activity.viewModels
 import com.artlens.view.composables.LikesListScreen
 import com.artlens.view.viewmodels.LikesViewModel
 import com.artlens.data.facade.FacadeProvider
-import com.artlens.data.facade.ViewModelFactory
+import com.artlens.view.viewmodels.ViewModelFactory
 import com.artlens.utils.UserPreferences
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
