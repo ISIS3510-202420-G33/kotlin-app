@@ -24,7 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.artlens.R
 import com.artlens.data.models.MuseumResponse
 import com.artlens.utils.UserPreferences
@@ -223,7 +223,7 @@ fun MuseumItem(museum: MuseumResponse, onClick: () -> Unit) {
     ) {
         // Imagen del museo
         Image(
-            painter = rememberImagePainter(data = museum.fields.image),
+            painter = rememberAsyncImagePainter(model = museum.fields.image),
             contentDescription = museum.fields.name,
             modifier = Modifier
                 .fillMaxWidth()

@@ -5,15 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.artlens.R
 import com.artlens.utils.UserPreferences
 
@@ -282,9 +277,9 @@ fun MuseumImageCarousel(imageUrls: List<String>, onMuseumClick: (Int) -> Unit, m
             .fillMaxWidth()
             .height(200.dp)
     ) {
-        itemsIndexed(imageUrls) { index, imageUrl ->  // Usamos itemsIndexed para obtener el índice
+        itemsIndexed(imageUrls) { index, imageUrl ->
             Image(
-                painter = rememberImagePainter(data = imageUrl),
+                painter = rememberAsyncImagePainter(model = imageUrl),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(8.dp)
@@ -292,7 +287,6 @@ fun MuseumImageCarousel(imageUrls: List<String>, onMuseumClick: (Int) -> Unit, m
                     .height(500.dp)
                     .clip(CircleShape)
                     .clickable {
-                        // Al hacer clic, redirigimos al detalle del museo correspondiente
                         onMuseumClick(museumIds[index])
                     },
                 contentScale = ContentScale.Crop

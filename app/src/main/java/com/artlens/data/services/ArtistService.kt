@@ -15,7 +15,7 @@ import retrofit2.Response
 
 class ArtistService(private val artistApi: ArtistApi) {
 
-    fun getArtistDetail(artistId: Int): LiveData<ArtistResponse> {
+    suspend fun getArtistDetail(artistId: Int): ArtistResponse? {
 
         val db = Firebase.firestore
 
@@ -35,28 +35,19 @@ class ArtistService(private val artistApi: ArtistApi) {
                 Log.w(TAG, "Error adding document", e)
             }
 
-        val artistLiveData = MutableLiveData<ArtistResponse>()
-
-        artistApi.getArtistDetail(artistId).enqueue(object : Callback<List<ArtistResponse>> {
-            override fun onResponse(call: Call<List<ArtistResponse>>, response: Response<List<ArtistResponse>>) {
-                if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
-                    // Obtener el primer artist de la lista
-                    artistLiveData.value = response.body()?.first()
-                } else {
-                    Log.e("ArtistService", "Error: ${response.errorBody()?.string()}")
-                }
+        return try {
+            val response = artistApi.getArtistDetail(artistId)
+            if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
+                response.body()?.first() // Devuelve el primer ArtistResponse si existe
+            } else {
+                Log.e("ArtistService", "Error: ${response.errorBody()?.string()}")
+                null
             }
-
-            override fun onFailure(call: Call<List<ArtistResponse>>, t: Throwable) {
-
-                artistLiveData.value = null // Manejo de error
-                Log.e("ArtistService", "Failure: ${t.message}")
-            }
-        })
-
-        return artistLiveData
+        } catch (e: Exception) {
+            Log.e("ArtistService", "Network failure: ${e.message}")
+            null
+        }
     }
-
     fun getAllArtists(): LiveData<List<ArtistResponse>> {
         val artistsLiveData = MutableLiveData<List<ArtistResponse>>()
 

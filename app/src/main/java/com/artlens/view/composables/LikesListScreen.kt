@@ -19,9 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.artlens.R
-import com.artlens.data.models.ArtworkResponse
 import com.artlens.view.viewmodels.LikesViewModel
 
 @Composable
@@ -150,7 +150,7 @@ fun MuseumLikeCard(
 
                 // Imagen del museo a la derecha
                 Image(
-                    painter = rememberImagePainter(data = museum.imageUrl),
+                    painter = rememberAsyncImagePainter(model = museum.imageUrl),
                     contentDescription = null,
                     modifier = Modifier
                         .weight(0.4f)

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.artlens.R
 import com.artlens.data.models.ArtworkResponse
@@ -163,7 +164,7 @@ fun ArtworkCard(artwork: ArtworkResponse, onClick: () -> Unit) {
             // Imagen rectangular a la derecha
             if (artwork.fields.image.isNotBlank()) {
                 Image(
-                    painter = rememberImagePainter(data = artwork.fields.image),
+                    painter = rememberAsyncImagePainter(model = artwork.fields.image),
                     contentDescription = artwork.fields.name,
                     modifier = Modifier
                         .weight(0.4f)

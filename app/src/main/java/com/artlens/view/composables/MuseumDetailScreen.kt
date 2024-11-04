@@ -12,8 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.artlens.R
 import com.artlens.data.models.MuseumResponse
@@ -42,7 +44,7 @@ fun MuseumDetailScreen(
             ) {
                 IconButton(onClick = onBackClick) {
                     Image(
-                        painter = rememberImagePainter(data = R.drawable.arrow),
+                        painter = painterResource(id = R.drawable.arrow),
                         contentDescription = "Back Arrow",
                         modifier = Modifier.size(30.dp)
                     )
@@ -57,7 +59,7 @@ fun MuseumDetailScreen(
 
                 IconButton(onClick = { /* Acción del perfil */ }) {
                     Image(
-                        painter = rememberImagePainter(data = R.drawable.profile),
+                        painter = painterResource(id = R.drawable.profile),
                         contentDescription = "Profile Icon",
                         modifier = Modifier.size(30.dp)
                     )
@@ -68,7 +70,7 @@ fun MuseumDetailScreen(
             Spacer(modifier = Modifier.height(16.dp))
             museum?.let {
                 Image(
-                    painter = rememberImagePainter(data = it.fields.image),
+                    painter = rememberAsyncImagePainter(model = it.fields.image),
                     contentDescription = it.fields.name,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -107,7 +109,7 @@ fun MuseumDetailScreen(
         ) {
             IconButton(onClick = onHomeClick) {
                 Image(
-                    painter = rememberImagePainter(data = R.drawable.house),
+                    painter = painterResource(id = R.drawable.house),
                     contentDescription = "Home",
                     modifier = Modifier.size(30.dp)
                 )
@@ -115,7 +117,7 @@ fun MuseumDetailScreen(
 
             IconButton(onClick = { /* Acción de cámara (Museos) */ }) {
                 Image(
-                    painter = rememberImagePainter(data = R.drawable.camera),
+                    painter = painterResource(id = R.drawable.camera),
                     contentDescription = "Museos",
                     modifier = Modifier.size(30.dp)
                 )
@@ -123,7 +125,7 @@ fun MuseumDetailScreen(
 
             IconButton(onClick = { /* Acción de artistas */ }) {
                 Image(
-                    painter = rememberImagePainter(data = R.drawable.fire),
+                    painter = painterResource(id = R.drawable.fire),
                     contentDescription = "Artistas",
                     modifier = Modifier.size(30.dp)
                 )
@@ -142,7 +144,7 @@ fun ImageArtCarousel(imageUrls: List<String>) {
     ) {
         items(imageUrls) { imageUrl ->
             Image(
-                painter = rememberImagePainter(data = imageUrl),
+                painter = rememberAsyncImagePainter(model = imageUrl),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(2.dp)

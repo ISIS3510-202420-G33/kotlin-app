@@ -27,7 +27,6 @@ class RecommendationsViewModel(private val analyticsService: ArtlensFacade) : Vi
 
                 withContext(Dispatchers.Main) {
                     _mostLikedArtwork.value = artwork
-                    Log.d("RecommendationsViewModel", "MostLikedArtwork updated: $artwork")
                 }
             } catch (e: Exception) {
                 Log.e("RecommendationsViewModel", "Error fetching most liked artwork", e)
