@@ -1,7 +1,5 @@
 package com.artlens.data.database
 
-import com.artlens.data.models.toMuseumEntity
-
 class MuseumRepository(private val museumDao: MuseumDao) {
 
     suspend fun insert(museum: List<MuseumEntity>) {
