@@ -46,19 +46,18 @@ class Facade(
         return artworkService.getArtworksByArtist(artistId)
     }
 
-    override fun getArtworksByMuseum(museumId: Int): LiveData<List<ArtworkResponse>> {
+    override suspend fun getArtworksByMuseum(museumId: Int): List<ArtworkResponse> {
         return artworkService.getArtworksByMuseum(museumId)
     }
 
     //MuseumService
-    override fun getMuseumDetail(museumId: Int): LiveData<MuseumResponse> {
+    override suspend fun getMuseumDetail(museumId: Int): MuseumResponse? {
         return museumService.getMuseumDetail(museumId)
     }
 
-    override fun getAllMuseums(): LiveData<List<MuseumResponse>> {
+    override suspend fun getAllMuseums(): List<MuseumResponse>? {
         return museumService.getAllMuseums()
     }
-
 
     //UserService
     override fun createUser(email: String, userName: String, name: String, password: String): MutableLiveData<CreateUserResponse> {

@@ -5,6 +5,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import com.artlens.data.models.ArtworkResponse
+import retrofit2.Response
 
 interface ArtworkApi {
     @GET("artworks/{id}")
@@ -14,7 +15,7 @@ interface ArtworkApi {
     fun getAllArtworks(): Call<List<ArtworkResponse>>
 
     @GET("artworks/museum/{id}")
-    fun getArtworksByMuseum(@Path("id") id: Int): Call<List<ArtworkResponse>>
+    suspend fun getArtworksByMuseum(@Path("id") id: Int): Response<List<ArtworkResponse>>
 
     @GET("artworks/artist/{id}")
     fun getArtworksByArtist(@Path("id") id: Int): Call<List<ArtworkResponse>>

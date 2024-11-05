@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import com.artlens.data.facade.FacadeProvider
@@ -25,29 +26,25 @@ class MuseumsDetailActivity : ComponentActivity() {
         val museumId = intent.getIntExtra("MUSEUM_ID", 1)
 
         setContent {
-            val museumState by museumsDetailViewModel.getMuseumDetail(museumId).observeAsState()
-            val artworkState by museumsDetailViewModel.getArtworksByMuseum(museumId).observeAsState(emptyList()) // Observamos las obras de arte
+            val museumState by museumsDetailViewModel.museumDetail.observeAsState()
+            val artworksState by museumsDetailViewModel.artworksByMuseum.observeAsState(emptyList())
 
-            // Verificar si hay artworks y URLs válidas
-            Log.d("MuseumsDetailActivity", "Number of artworks: ${artworkState.size}")
-            artworkState.forEach { artwork ->
-                Log.d("MuseumsDetailActivity", "Artwork URL: ${artwork.fields.image}")
+            LaunchedEffect(Unit) {
+                museumsDetailViewModel.fetchMuseumDetail(museumId)
+                museumsDetailViewModel.fetchArtworksByMuseum(museumId)
             }
-            // Obtenemos las URLs de las obras de arte
-            val artworkUrls = artworkState.map { it.fields.image }.take(5) // Tomamos solo 5 obras
 
-            MuseumDetailScreen(
-                museum = museumState,
-                artworkUrls = artworkUrls,  // Pasamos las URLs al carrusel
-                onBackClick = {
-                    onBackPressed()
-                },
-                onHomeClick = {
-                    // Ir a la MainActivity
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                }
-            )
+            artworksState?.map { it.fields.image }?.let {
+                MuseumDetailScreen(
+                    museum = museumState,
+                    artworkUrls = it.take(5),
+                    onBackClick = { onBackPressed() },
+                    onHomeClick = {
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                    }
+                )
+            }
         }
     }
 }

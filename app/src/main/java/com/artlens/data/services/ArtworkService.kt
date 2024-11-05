@@ -139,26 +139,19 @@ class ArtworkService(private val artworkApi: ArtworkApi, private val cache: Artw
         return artworksLiveData
     }
 
-    fun getArtworksByMuseum(museumId: Int): LiveData<List<ArtworkResponse>> {
-        val artworksLiveData = MutableLiveData<List<ArtworkResponse>>()
+    suspend fun getArtworksByMuseum(museumId: Int): List<ArtworkResponse> {
+        return try {
+            val response = artworkApi.getArtworksByMuseum(museumId)
 
-        artworkApi.getArtworksByMuseum(museumId).enqueue(object : Callback<List<ArtworkResponse>> {
-            override fun onResponse(call: Call<List<ArtworkResponse>>, response: Response<List<ArtworkResponse>>) {
-                if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
-                    // Obtenemos las primeras 20 obras de arte del museo
-                    artworksLiveData.value = response.body()?.take(20)
-                } else {
-                    Log.e("ArtworkService", "Error: ${response.errorBody()?.string()}")
-                }
+            if (response.isSuccessful && response.body() != null) {
+                response.body() ?: emptyList() // Devuelve la lista de recomendaciones
+            } else {
+                emptyList()
             }
-
-            override fun onFailure(call: Call<List<ArtworkResponse>>, t: Throwable) {
-                Log.e("ArtworkService", "Failure: ${t.message}")
-                artworksLiveData.value = emptyList() // Lista vacía en caso de error
-            }
-        })
-
-        return artworksLiveData
+        } catch (e: Exception) {
+            Log.e("AnalyticsService", "Network failure: ${e.message}")
+            emptyList() // Devuelve una lista vacía en caso de fallo de red
+        }
     }
 }
 

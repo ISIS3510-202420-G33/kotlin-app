@@ -9,6 +9,7 @@ import com.artlens.data.facade.ArtlensFacade
 import com.artlens.data.models.MuseumResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MuseumsListViewModel(private val facade: ArtlensFacade) : ViewModel() {
 
@@ -22,10 +23,15 @@ class MuseumsListViewModel(private val facade: ArtlensFacade) : ViewModel() {
         fetchMuseums()
     }
 
-    private fun fetchMuseums() {
-        facade.getAllMuseums().observeForever { museums ->
-            Log.d("MuseumsListViewModel", "Museums received: ${museums.size}")
-            _museumsLiveData.value = museums
+    fun fetchMuseums() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val museums = facade.getAllMuseums()
+            withContext(Dispatchers.Main) {
+                museums?.let {
+                    Log.d("MuseumsListViewModel", "Museums received: ${it.size}")
+                    _museumsLiveData.value = it
+                } ?: Log.e("MuseumsListViewModel", "No museums found")
+            }
         }
     }
 
