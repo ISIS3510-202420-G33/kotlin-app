@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.artlens.data.api.ArtistApi
+import com.artlens.data.cache.ArtistCache
 import com.artlens.data.models.ArtistResponse
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
@@ -13,7 +14,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ArtistService(private val artistApi: ArtistApi) {
+class ArtistService(private val artistApi: ArtistApi, private val cache: ArtistCache) {
 
     suspend fun getArtistDetail(artistId: Int): ArtistResponse? {
 
@@ -35,10 +36,21 @@ class ArtistService(private val artistApi: ArtistApi) {
                 Log.w(TAG, "Error adding document", e)
             }
 
+        cache.get(artistId)?.let {
+            Log.d("ArtistService", "Retrieved artist detail from cache")
+            return it
+        }
+
         return try {
             val response = artistApi.getArtistDetail(artistId)
             if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
-                response.body()?.first() // Devuelve el primer ArtistResponse si existe
+                val artist = response.body()?.first() // Obtiene el primer ArtistResponse
+
+                // Almacena el resultado en el cache para futuras consultas
+                if (artist != null) {
+                    cache.put(artistId, artist)
+                }
+                artist
             } else {
                 Log.e("ArtistService", "Error: ${response.errorBody()?.string()}")
                 null
@@ -48,6 +60,7 @@ class ArtistService(private val artistApi: ArtistApi) {
             null
         }
     }
+
     fun getAllArtists(): LiveData<List<ArtistResponse>> {
         val artistsLiveData = MutableLiveData<List<ArtistResponse>>()
 
