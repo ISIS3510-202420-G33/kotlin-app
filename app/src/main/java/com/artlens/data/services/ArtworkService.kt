@@ -1,11 +1,15 @@
 package com.artlens.data.services
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.artlens.data.api.ArtworkApi
 import com.artlens.data.cache.ArtworkCache
 import com.artlens.data.models.ArtworkResponse
+import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.firestore
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -25,10 +29,13 @@ class ArtworkService(private val artworkApi: ArtworkApi, private val cache: Artw
             return artworkLiveData
         }
 
+        val db = Firebase.firestore
+        val startTime = System.currentTimeMillis()
 
         // If not cached, proceed with network request
         artworkApi.getArtworkDetail(artworkId).enqueue(object : Callback<List<ArtworkResponse>> {
             override fun onResponse(call: Call<List<ArtworkResponse>>, response: Response<List<ArtworkResponse>>) {
+                val elapsedTime = System.currentTimeMillis() - startTime
                 if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
                     val artwork = response.body()?.first()
 
@@ -40,11 +47,47 @@ class ArtworkService(private val artworkApi: ArtworkApi, private val cache: Artw
                 } else {
                     Log.e("ArtworkService", "Error: ${response.errorBody()?.string()}")
                 }
+
+                // Create a new user with a first, middle, and last name
+                val user = hashMapOf(
+                    "Tiempo" to elapsedTime,
+                    "Fecha" to Timestamp.now()
+                )
+
+                // Add a new document with a generated ID
+                db.collection("BQ12")
+                    .add(user)
+                    .addOnSuccessListener { documentReference ->
+                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error adding document", e)
+                    }
+
+
             }
 
             override fun onFailure(call: Call<List<ArtworkResponse>>, t: Throwable) {
+                val elapsedTime = System.currentTimeMillis() - startTime
                 artworkLiveData.value = null
                 Log.e("ArtworkService", "Failure: ${t.message}")
+
+
+                // Create a new user with a first, middle, and last name
+                val user = hashMapOf(
+                    "Tiempo" to elapsedTime,
+                    "Fecha" to Timestamp.now()
+                )
+
+                // Add a new document with a generated ID
+                db.collection("BQ12")
+                    .add(user)
+                    .addOnSuccessListener { documentReference ->
+                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error adding document", e)
+                    }
             }
         })
 
