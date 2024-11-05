@@ -18,6 +18,7 @@ data class MuseumFields(
     val image: String
 )
 
+// Conversión de MuseumResponse a MuseumEntity para almacenamiento
 fun MuseumResponse.toMuseumEntity(): MuseumEntity {
     return MuseumEntity(
         id = this.pk,

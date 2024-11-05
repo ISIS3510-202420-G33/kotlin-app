@@ -8,15 +8,12 @@ import androidx.room.Query
 @Dao
 interface MuseumDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(museums: List<MuseumEntity>)
-
-    @Query("SELECT * FROM museums WHERE id = :museumId")
-    suspend fun getMuseumById(museumId: Int): MuseumEntity?
-
     @Query("SELECT * FROM museums")
     suspend fun getAllMuseums(): List<MuseumEntity>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMuseums(museums: List<MuseumEntity>)
+
     @Query("DELETE FROM museums")
-    suspend fun clearAll()
+    suspend fun deleteAllMuseums()
 }

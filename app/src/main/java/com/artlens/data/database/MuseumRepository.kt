@@ -1,20 +1,18 @@
 package com.artlens.data.database
 
+import com.artlens.data.models.toMuseumEntity
+
 class MuseumRepository(private val museumDao: MuseumDao) {
 
-    suspend fun insert(museums: List<MuseumEntity>) {
-        museumDao.insertAll(museums)
+    suspend fun insert(museum: List<MuseumEntity>) {
+        museumDao.insertMuseums(museum)
     }
 
     suspend fun getAllMuseums(): List<MuseumEntity> {
         return museumDao.getAllMuseums()
     }
 
-    suspend fun getMuseumById(museumId: Int): MuseumEntity? {
-        return museumDao.getMuseumById(museumId)
-    }
-
-    suspend fun deleteAllMuseums() {
-        museumDao.clearAll()
+    suspend fun deleteAll() {
+        museumDao.deleteAllMuseums()
     }
 }
