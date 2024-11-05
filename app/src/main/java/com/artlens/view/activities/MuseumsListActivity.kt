@@ -45,35 +45,37 @@ class MuseumsListActivity : ComponentActivity() {
                 var showDialog by remember { mutableStateOf(false) }
                 val museumsState by museumsViewModel.museumsLiveData.observeAsState(emptyList())
 
-                MuseumsListScreen(
-                    museums = museumsState,
-                    onBackClick = { onBackPressed() },
-                    onHomeClick = { navigateToMainActivity() },
-                    onRecommendationClick = { navigateToRecommendations() },
-                    onCameraClick = {
-                        val intent = Intent(this, qrCodeActivity::class.java)
-                        startActivity(intent)
-                    },
-                    onUserClick = {
-                        val pk = UserPreferences.getPk()
-                        if (pk!! >= 0) {
-                            showDialog = true
-                        } else {
-                            val intent = Intent(this, LogInActivity::class.java)
+                museumsState?.let {
+                    MuseumsListScreen(
+                        museums = it,
+                        onBackClick = { onBackPressed() },
+                        onHomeClick = { navigateToMainActivity() },
+                        onRecommendationClick = { navigateToRecommendations() },
+                        onCameraClick = {
+                            val intent = Intent(this, qrCodeActivity::class.java)
+                            startActivity(intent)
+                        },
+                        onUserClick = {
+                            val pk = UserPreferences.getPk()
+                            if (pk!! >= 0) {
+                                showDialog = true
+                            } else {
+                                val intent = Intent(this, LogInActivity::class.java)
+                                startActivity(intent)
+                            }
+                        },
+                        showDialog = showDialog,
+                        onDismissDialog = { showDialog = false },
+                        logOutClick = { UserPreferences.clearUserData() },
+                        onViewFavoritesClick = {
+                            val intent = Intent(this, ListScreenActivity::class.java)
                             startActivity(intent)
                         }
-                    },
-                    showDialog = showDialog,
-                    onDismissDialog = { showDialog = false },
-                    logOutClick = { UserPreferences.clearUserData() },
-                    onViewFavoritesClick = {
-                        val intent = Intent(this, ListScreenActivity::class.java)
+                    ) { museumId ->
+                        val intent = Intent(this, MuseumsDetailActivity::class.java)
+                        intent.putExtra("MUSEUM_ID", museumId)
                         startActivity(intent)
                     }
-                ) { museumId ->
-                    val intent = Intent(this, MuseumsDetailActivity::class.java)
-                    intent.putExtra("MUSEUM_ID", museumId)
-                    startActivity(intent)
                 }
             } else {
                 // Mostrar pantalla de espera si no hay conexión

@@ -18,11 +18,11 @@ interface ArtlensFacade {
     fun getArtworkDetail(artworkId: Int): LiveData<ArtworkResponse>
     fun getAllArtworks(): LiveData<List<ArtworkResponse>>
     fun getArtworksByArtist(artistId: Int): LiveData<List<ArtworkResponse>>
-    fun getArtworksByMuseum(museumId: Int): LiveData<List<ArtworkResponse>>
+    suspend fun getArtworksByMuseum(museumId: Int): List<ArtworkResponse>
 
     //MuseumAPI
-    fun getMuseumDetail(museumId: Int): LiveData<MuseumResponse>
-    fun getAllMuseums(): LiveData<List<MuseumResponse>>
+    suspend fun getMuseumDetail(museumId: Int): MuseumResponse?
+    suspend fun getAllMuseums(): List<MuseumResponse>?
 
     //UserAPI
     fun createUser(email: String, userName: String, name: String, password: String): LiveData<CreateUserResponse>
