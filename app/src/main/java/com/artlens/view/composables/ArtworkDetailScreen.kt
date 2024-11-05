@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -23,10 +24,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.artlens.R
 import com.artlens.data.models.ArtworkResponse
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 
 @Composable
 fun ForumEntry(userName: String, comment: String) {
@@ -141,17 +142,16 @@ fun ArtworkDetailScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Imagen de la obra
-                AndroidView(
-                    factory = { ImageView(context) },
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(it.fields.image)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = it.fields.name,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(250.dp),
-                    update = { imageView ->
-                        Glide.with(context)
-                            .load(it.fields.image)
-                            .apply(RequestOptions().centerInside())
-                            .into(imageView)
-                    }
+                    contentScale = ContentScale.Crop
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

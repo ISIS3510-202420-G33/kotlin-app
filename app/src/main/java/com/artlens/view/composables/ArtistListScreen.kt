@@ -18,7 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.artlens.R
 import com.artlens.data.models.ArtistResponse
 
@@ -136,7 +136,7 @@ fun ArtistItem(artist: ArtistResponse, onClick: () -> Unit) {
     ) {
         // Imagen del artista
         Image(
-            painter = rememberImagePainter(data = artist.fields.image),
+            painter = rememberAsyncImagePainter(model = artist.fields.image),
             contentDescription = artist.fields.name,
             modifier = Modifier
                 .fillMaxWidth()

@@ -25,7 +25,7 @@ class Facade(
 ) : ArtlensFacade {
 
     //ArtistService
-    override fun getArtistDetail(artistId: Int): LiveData<ArtistResponse> {
+    override suspend fun getArtistDetail(artistId: Int): ArtistResponse? {
         return artistService.getArtistDetail(artistId)
     }
 

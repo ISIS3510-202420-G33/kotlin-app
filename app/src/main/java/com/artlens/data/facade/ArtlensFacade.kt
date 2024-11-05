@@ -11,7 +11,7 @@ import com.artlens.data.models.UserResponse
 
 interface ArtlensFacade {
     //ArtistAPI
-    fun getArtistDetail(artistId: Int): LiveData<ArtistResponse>
+    suspend fun getArtistDetail(artistId: Int): ArtistResponse?
     fun getAllArtists(): LiveData<List<ArtistResponse>>
 
     //ArtworkAPI

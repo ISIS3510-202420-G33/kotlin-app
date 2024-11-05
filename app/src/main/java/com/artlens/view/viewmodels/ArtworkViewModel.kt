@@ -1,10 +1,13 @@
 
 package com.artlens.view.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.artlens.data.facade.ArtlensFacade
 import com.artlens.data.models.ArtworkResponse
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ArtworkViewModel(private val facade: ArtlensFacade) : ViewModel() {
 
@@ -23,11 +26,17 @@ class ArtworkViewModel(private val facade: ArtlensFacade) : ViewModel() {
 
     // Método para obtener los detalles del artista por su ID
     fun fetchArtistName(artistId: Int) {
-        viewModelScope.launch {
-            facade.getArtistDetail(artistId).observeForever { artistResponse ->
-                artistResponse?.let {
-                    _artistName.value = it.fields.name  // Almacenar el nombre del artista
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val artistResponse = facade.getArtistDetail(artistId)
+
+                withContext(Dispatchers.Main) {
+                    artistResponse?.let {
+                        _artistName.value = it.fields.name
+                    }
                 }
+            } catch (e: Exception) {
+                Log.e("ArtistViewModel", "Error fetching artist name", e)
             }
         }
     }

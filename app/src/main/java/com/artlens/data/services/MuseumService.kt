@@ -4,28 +4,38 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.artlens.data.api.MuseumApi
+import com.artlens.data.cache.MuseumCache
 import com.artlens.data.models.MuseumResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MuseumService(private val museumApi: MuseumApi) {
+class MuseumService(private val museumApi: MuseumApi, private val cache: MuseumCache) {
 
     fun getMuseumDetail(museumId: Int): LiveData<MuseumResponse> {
         val museumLiveData = MutableLiveData<MuseumResponse>()
 
+        cache.get(museumId)?.let {
+            museumLiveData.value = it
+            Log.d("MuseumService", "Retrieved museum detail from cache")
+            return museumLiveData
+        }
+
         museumApi.getMuseumDetail(museumId).enqueue(object : Callback<List<MuseumResponse>> {
             override fun onResponse(call: Call<List<MuseumResponse>>, response: Response<List<MuseumResponse>>) {
                 if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
-                    museumLiveData.value = response.body()?.first()
+                    val museum = response.body()?.first()
+                    // Almacena el museo en el cache y actualiza el LiveData
+                    if (museum != null) {
+                        cache.put(museumId, museum)
+                        museumLiveData.value = museum
+                    }
                 } else {
-                    // Manejo de error: podrías retornar un valor de error en lugar de null
                     Log.e("MuseumService", "Error: ${response.errorBody()?.string()}")
                 }
             }
 
             override fun onFailure(call: Call<List<MuseumResponse>>, t: Throwable) {
-                // No se asigna null directamente, manejo el error de alguna forma
                 Log.e("MuseumService", "Failure: ${t.message}")
             }
         })

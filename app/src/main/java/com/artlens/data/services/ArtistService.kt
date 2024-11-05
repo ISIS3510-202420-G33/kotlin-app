@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.artlens.data.api.ArtistApi
+import com.artlens.data.cache.ArtistCache
 import com.artlens.data.models.ArtistResponse
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
@@ -13,9 +14,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ArtistService(private val artistApi: ArtistApi) {
+class ArtistService(private val artistApi: ArtistApi, private val cache: ArtistCache) {
 
-    fun getArtistDetail(artistId: Int): LiveData<ArtistResponse> {
+    suspend fun getArtistDetail(artistId: Int): ArtistResponse? {
 
         val db = Firebase.firestore
 
@@ -35,26 +36,29 @@ class ArtistService(private val artistApi: ArtistApi) {
                 Log.w(TAG, "Error adding document", e)
             }
 
-        val artistLiveData = MutableLiveData<ArtistResponse>()
+        cache.get(artistId)?.let {
+            Log.d("ArtistService", "Retrieved artist detail from cache")
+            return it
+        }
 
-        artistApi.getArtistDetail(artistId).enqueue(object : Callback<List<ArtistResponse>> {
-            override fun onResponse(call: Call<List<ArtistResponse>>, response: Response<List<ArtistResponse>>) {
-                if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
-                    // Obtener el primer artist de la lista
-                    artistLiveData.value = response.body()?.first()
-                } else {
-                    Log.e("ArtistService", "Error: ${response.errorBody()?.string()}")
+        return try {
+            val response = artistApi.getArtistDetail(artistId)
+            if (response.isSuccessful && response.body()?.isNotEmpty() == true) {
+                val artist = response.body()?.first() // Obtiene el primer ArtistResponse
+
+                // Almacena el resultado en el cache para futuras consultas
+                if (artist != null) {
+                    cache.put(artistId, artist)
                 }
+                artist
+            } else {
+                Log.e("ArtistService", "Error: ${response.errorBody()?.string()}")
+                null
             }
-
-            override fun onFailure(call: Call<List<ArtistResponse>>, t: Throwable) {
-
-                artistLiveData.value = null // Manejo de error
-                Log.e("ArtistService", "Failure: ${t.message}")
-            }
-        })
-
-        return artistLiveData
+        } catch (e: Exception) {
+            Log.e("ArtistService", "Network failure: ${e.message}")
+            null
+        }
     }
 
     fun getAllArtists(): LiveData<List<ArtistResponse>> {
