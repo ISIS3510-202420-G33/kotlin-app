@@ -38,7 +38,8 @@ fun MainScreen(
     showDialog: Boolean,
     onDismissDialog: () -> Unit,
     logOutClick: () -> Unit,
-    onViewFavoritesClick: () -> Unit
+    onViewFavoritesClick: () -> Unit,
+    onSearchClick: () -> Unit
 
 ) {
 
@@ -167,6 +168,9 @@ fun MainScreen(
                     .padding(vertical = 16.dp)
                     .background(Color(0xFFE0E0E0), shape = CircleShape)
                     .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .clickable {
+                        onSearchClick()
+                    }
             ) {
                 Text(
                     text = "Find a piece of art, an artist or a museum",
