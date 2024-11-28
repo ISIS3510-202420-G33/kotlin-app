@@ -191,7 +191,12 @@ class ArtworkService(private val artworkApi: ArtworkApi, private val cache: Artw
     private fun writeFavoritesToStream(likedMuseums: List<ArtworkResponse>, outputStream: OutputStream?) {
         outputStream?.bufferedWriter()?.use { writer ->
             likedMuseums.forEach { artwork ->
-                val museumData = "Name: ${artwork.fields.name}\nDescription: ${artwork.fields.advancedInfo}\n\n"
+                val museumData = "Name: ${artwork.fields.name}\n" +
+                        "\tDate: ${artwork.fields.date}\n" +
+                        "\tTechnique: ${artwork.fields.technique}\n" +
+                        "\tDimensions: ${artwork.fields.dimensions}\n" +
+                        "\tInterpretation: ${artwork.fields.interpretation}\n" +
+                        "\tDescription: ${artwork.fields.advancedInfo}\n\n"
                 writer.write(museumData)
             }
         }
