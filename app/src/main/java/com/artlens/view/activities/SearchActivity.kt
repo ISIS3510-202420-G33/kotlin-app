@@ -1,5 +1,6 @@
 package com.artlens.view.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -44,7 +45,21 @@ class SearchActivity : ComponentActivity() {
 
             SearchScreen(
                 onBackClick = { onBackPressed()},
-                onMuseumClick = {},
+                onMuseumClick = {museumId ->
+                    val intent = Intent(this, MuseumsDetailActivity::class.java)
+                    intent.putExtra("MUSEUM_ID", museumId)
+                    startActivity(intent)
+                },
+                onArtistClick = {artistId ->
+                    val intent = Intent(this, ArtistDetailActivity::class.java)
+                    intent.putExtra("ARTIST_ID", artistId)
+                    startActivity(intent)
+                },
+                onArtworkClick = {artworkId ->
+                    val intent = Intent(this, ArtworkDetailActivity::class.java)
+                    intent.putExtra("id", artworkId)
+                    startActivity(intent)
+                },
                 onUserClick = {},
                 museums = museums,
                 artists = artists,

@@ -56,6 +56,8 @@ fun SearchScreen(
     onBackClick: () -> Unit,
     onUserClick: () -> Unit,
     onMuseumClick: (Int) -> Unit,
+    onArtistClick: (Int) -> Unit,
+    onArtworkClick: (Int) -> Unit,
     museums: List<MuseumResponse>,
     artists: List<ArtistResponse>,
     artwork: List<ArtworkResponse>
@@ -160,7 +162,7 @@ fun SearchScreen(
                     }
 
                     items(filteredArtists) { artist ->
-                        artistItemSearch(artist = artist)
+                        artistItemSearch(artist = artist, onClick = { onArtistClick(artist.pk)})
                     }
                 }
 
@@ -176,7 +178,7 @@ fun SearchScreen(
                     }
 
                     items(filteredArtworks) { art ->
-                        artworkItemSearch(artwork = art)
+                        artworkItemSearch(artwork = art, onClick = {onArtworkClick(art.pk)})
                     }
                 }
             }
@@ -217,10 +219,11 @@ fun museumItemSearch(museum: MuseumResponse, onClick: () -> Unit) {
 }
 
 @Composable
-fun artistItemSearch(artist: ArtistResponse) {
+fun artistItemSearch(artist: ArtistResponse, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(vertical = 8.dp) // Spacing between items
     ) {
         Image(
@@ -247,10 +250,11 @@ fun artistItemSearch(artist: ArtistResponse) {
 }
 
 @Composable
-fun artworkItemSearch(artwork: ArtworkResponse) {
+fun artworkItemSearch(artwork: ArtworkResponse, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(vertical = 8.dp) // Spacing between items
     ) {
         Image(
