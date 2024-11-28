@@ -20,6 +20,7 @@ class ArtworkService(private val artworkApi: ArtworkApi, private val cache: Artw
         val artworkLiveData = MutableLiveData<ArtworkResponse>()
 
 
+
         // Check the cache first
         cache.get(artworkId)?.let {
             // Return cached data if available

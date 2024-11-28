@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,20 +21,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.artlens.R
 import com.artlens.view.viewmodels.LikesViewModel
+import androidx.compose.ui.platform.LocalContext
+import com.artlens.data.models.ArtworkResponse
 
 @Composable
 fun LikesListScreen(
     onBackClick: () -> Unit,
     onMuseumClick: (Int) -> Unit,
+    onDownloadClick: (List<ArtworkResponse>) -> Unit,
     likesViewModel: LikesViewModel
 ) {
     val likedMuseums by likesViewModel.likedMuseums.observeAsState(emptyList())
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.White)) {
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
@@ -65,6 +72,22 @@ fun LikesListScreen(
                     )
                 }
             }
+
+            //Boton para descargar info
+            Button(
+                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
+                shape = RoundedCornerShape(22.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Black,   // Button background color
+                    contentColor = Color.White       // Text color inside the button
+                ),
+                onClick = {
+                    onDownloadClick(likedMuseums)
+                }
+            ) {
+                Text("Download Favorites")
+            }
+
 
             // Lista de museos que el usuario ha marcado como "Me gusta"
             LazyColumn(

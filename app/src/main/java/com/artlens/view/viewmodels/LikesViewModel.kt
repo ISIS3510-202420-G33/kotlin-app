@@ -19,7 +19,6 @@ class LikesViewModel(private val facade: ArtlensFacade) : ViewModel() {
     }
 
     fun removeLike(artworkId: Int) {
-
         val user = UserPreferences.getPk()
 
         if (user != null) {
@@ -30,4 +29,6 @@ class LikesViewModel(private val facade: ArtlensFacade) : ViewModel() {
             }
         }
     }
+
+
 }
