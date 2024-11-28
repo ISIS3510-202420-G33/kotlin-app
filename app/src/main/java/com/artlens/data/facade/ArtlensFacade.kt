@@ -1,5 +1,6 @@
 package com.artlens.data.facade
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.artlens.data.models.ArtistResponse
@@ -19,6 +20,7 @@ interface ArtlensFacade {
     fun getAllArtworks(): LiveData<List<ArtworkResponse>>
     fun getArtworksByArtist(artistId: Int): LiveData<List<ArtworkResponse>>
     suspend fun getArtworksByMuseum(museumId: Int): List<ArtworkResponse>
+    fun downloadFavorites(likedMuseums: List<ArtworkResponse>, context: Context)
 
     //MuseumAPI
     suspend fun getMuseumDetail(museumId: Int): MuseumResponse?

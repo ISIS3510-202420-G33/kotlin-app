@@ -19,6 +19,7 @@ import com.artlens.data.facade.FacadeProvider
 import com.artlens.data.models.ArtworkResponse
 import com.artlens.view.viewmodels.ViewModelFactory
 import com.artlens.utils.UserPreferences
+import com.artlens.view.viewmodels.ArtworkViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
@@ -28,6 +29,10 @@ class ListScreenActivity : ComponentActivity() {
 
     // Obtenemos el ViewModel de los museos que le gustan al usuario
     private val likesViewModel: LikesViewModel by viewModels {
+        ViewModelFactory(FacadeProvider.facade)
+    }
+
+    private val artworkViewModel: ArtworkViewModel by viewModels {
         ViewModelFactory(FacadeProvider.facade)
     }
 
@@ -72,49 +77,12 @@ class ListScreenActivity : ComponentActivity() {
                 },
                 onDownloadClick = { likedMuseums ->
                     // Pass the liked museums list to downloadFavorites
-                    downloadFavorites(likedMuseums, context)
+                    artworkViewModel.downloadFavorites(likedMuseums, context)
                 },
                 likesViewModel = likesViewModel
             )
         }
     }
 
-
-
-    private fun downloadFavorites(likedMuseums: List<ArtworkResponse>, context: Context) {
-        val fileName = "favorite_museums.txt"
-
-
-        // Use MediaStore for Android 10+
-        val resolver = context.contentResolver
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-            put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
-            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
-        }
-
-        val uri = resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
-        if (uri != null) {
-            try {
-                resolver.openOutputStream(uri).use { outputStream ->
-                    writeFavoritesToStream(likedMuseums, outputStream)
-                }
-                Toast.makeText(context, "File saved to Downloads folder.", Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                Toast.makeText(context, "Error saving file: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            Toast.makeText(context, "Failed to create file.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun writeFavoritesToStream(likedMuseums: List<ArtworkResponse>, outputStream: OutputStream?) {
-        outputStream?.bufferedWriter()?.use { writer ->
-            likedMuseums.forEach { artwork ->
-                val museumData = "Name: ${artwork.fields.name}\nDescription: ${artwork.fields.advancedInfo}\n\n"
-                writer.write(museumData)
-            }
-        }
-    }
 }
 
