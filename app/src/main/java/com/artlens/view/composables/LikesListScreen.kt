@@ -1,5 +1,8 @@
 package com.artlens.view.composables
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,6 +14,9 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,7 +39,15 @@ fun LikesListScreen(
     onDownloadClick: (List<ArtworkResponse>) -> Unit,
     likesViewModel: LikesViewModel
 ) {
+    val context = LocalContext.current
     val likedMuseums by likesViewModel.likedMuseums.observeAsState(emptyList())
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        NoInternetDialog(
+            onDismiss = {  showDialog = false }  // Close the dialog
+        )
+    }
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -101,8 +115,16 @@ fun LikesListScreen(
                             description = limitWordss(artwork.fields.advancedInfo ?: "No description available", 20),
                             imageUrl = artwork.fields.image
                         ),
-                        onClick = { onMuseumClick(artwork.pk) },
-                        onRemoveLike = { likesViewModel.removeLike(artwork.pk) }
+                        onClick = {
+                            if (isInternetAvailable(context)) {
+                                onMuseumClick(artwork.pk)
+                            } else {
+                                showDialog = true // Show the dialog when no internet is available
+                            }
+                            },
+
+                        onRemoveLike = { likesViewModel.removeLike(artwork.pk) },
+                        setFalse = {showDialog = true}
                     )
                 }
             }
@@ -114,8 +136,13 @@ fun LikesListScreen(
 fun MuseumLikeCard(
     museum: Recommendations,
     onClick: () -> Unit,
-    onRemoveLike: () -> Unit
+    onRemoveLike: () -> Unit,
+    setFalse: () -> Unit,
+
 ) {
+
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -151,7 +178,15 @@ fun MuseumLikeCard(
 
                         // Ícono de basura
                         IconButton(
-                            onClick = { onRemoveLike() },
+                            onClick = {
+
+                                if (isInternetAvailable(context)) {
+                                    onRemoveLike()
+                                } else {
+                                    setFalse() // Show the dialog when no internet is available
+                                }
+
+                                      },
                             modifier = Modifier
                                 .size(24.dp)
                         ) {
@@ -211,4 +246,11 @@ fun limitWordss(text: String, wordLimit: Int): String {
     } else {
         text
     }
+}
+
+fun isInternetAvailable(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val network = connectivityManager.activeNetwork ?: return false
+    val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+    return activeNetwork.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
 }
