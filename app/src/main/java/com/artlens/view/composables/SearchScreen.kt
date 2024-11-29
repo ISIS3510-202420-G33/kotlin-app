@@ -1,5 +1,8 @@
 package com.artlens.view.composables
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -68,6 +72,15 @@ fun SearchScreen(
     val filteredMuseums = museums.filter { it.fields.name.contains(search, ignoreCase = true) }
     val filteredArtists = artists.filter { it.fields.name.contains(search, ignoreCase = true) }
     val filteredArtworks = artwork.filter { it.fields.name.contains(search, ignoreCase = true) }
+
+    val context = LocalContext.current
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        NoInternetDialog(
+            onDismiss = {  showDialog = false }  // Close the dialog
+        )
+    }
 
     Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -278,5 +291,12 @@ fun artworkItemSearch(artwork: ArtworkResponse, onClick: () -> Unit) {
             overflow = TextOverflow.Ellipsis
         )
     }
+}
+
+fun isInternetAvailable(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val network = connectivityManager.activeNetwork ?: return false
+    val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+    return activeNetwork.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
 }
 
