@@ -73,15 +73,6 @@ fun SearchScreen(
     val filteredArtists = artists.filter { it.fields.name.contains(search, ignoreCase = true) }
     val filteredArtworks = artwork.filter { it.fields.name.contains(search, ignoreCase = true) }
 
-    val context = LocalContext.current
-    var showDialog by remember { mutableStateOf(false) }
-
-    if (showDialog) {
-        NoInternetDialog(
-            onDismiss = {  showDialog = false }  // Close the dialog
-        )
-    }
-
     Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Header Row
@@ -291,12 +282,5 @@ fun artworkItemSearch(artwork: ArtworkResponse, onClick: () -> Unit) {
             overflow = TextOverflow.Ellipsis
         )
     }
-}
-
-fun isInternetAvailable(context: Context): Boolean {
-    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val network = connectivityManager.activeNetwork ?: return false
-    val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
-    return activeNetwork.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
 }
 
