@@ -1,25 +1,38 @@
 package com.artlens.view.activities
 
+import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.ui.platform.LocalContext
 import com.artlens.view.composables.LikesListScreen
 import com.artlens.view.viewmodels.LikesViewModel
 import com.artlens.data.facade.FacadeProvider
+import com.artlens.data.models.ArtworkResponse
 import com.artlens.view.viewmodels.ViewModelFactory
 import com.artlens.utils.UserPreferences
+import com.artlens.view.viewmodels.ArtworkViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
+import java.io.OutputStream
 
 class ListScreenActivity : ComponentActivity() {
 
     // Obtenemos el ViewModel de los museos que le gustan al usuario
     private val likesViewModel: LikesViewModel by viewModels {
+        ViewModelFactory(FacadeProvider.facade)
+    }
+
+    private val artworkViewModel: ArtworkViewModel by viewModels {
         ViewModelFactory(FacadeProvider.facade)
     }
 
@@ -51,6 +64,7 @@ class ListScreenActivity : ComponentActivity() {
         }
 
         setContent {
+            val context = LocalContext.current
             LikesListScreen(
                 onBackClick = {
                     onBackPressed()
@@ -61,9 +75,14 @@ class ListScreenActivity : ComponentActivity() {
                     intent.putExtra("id", artworkId)  // Pasamos el ID de la obra seleccionada
                     startActivity(intent)
                 },
+                onDownloadClick = { likedMuseums ->
+                    // Pass the liked museums list to downloadFavorites
+                    artworkViewModel.downloadFavorites(likedMuseums, context)
+                },
                 likesViewModel = likesViewModel
             )
         }
     }
+
 }
 
