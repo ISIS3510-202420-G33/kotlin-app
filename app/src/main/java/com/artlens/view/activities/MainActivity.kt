@@ -79,6 +79,11 @@ class MainActivity : ComponentActivity() {
                         onViewFavoritesClick = {
                             val intent = Intent(this, ListScreenActivity::class.java)
                             startActivity(intent)
+                        },
+
+                        onSearchClick = {
+                            val intent = Intent(this, SearchActivity::class.java)
+                            startActivity(intent)
                         }
                     )
                 }
