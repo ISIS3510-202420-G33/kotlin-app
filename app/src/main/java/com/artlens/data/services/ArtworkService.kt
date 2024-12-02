@@ -1,7 +1,12 @@
 package com.artlens.data.services
 
+import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.artlens.data.api.ArtworkApi
@@ -13,11 +18,13 @@ import com.google.firebase.firestore.firestore
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.OutputStream
 
 class ArtworkService(private val artworkApi: ArtworkApi, private val cache: ArtworkCache) {
 
     fun getArtworkDetail(artworkId: Int): LiveData<ArtworkResponse> {
         val artworkLiveData = MutableLiveData<ArtworkResponse>()
+
 
 
         // Check the cache first
@@ -153,5 +160,48 @@ class ArtworkService(private val artworkApi: ArtworkApi, private val cache: Artw
             emptyList() // Devuelve una lista vacía en caso de fallo de red
         }
     }
+
+
+    fun downloadFavorites(likedMuseums: List<ArtworkResponse>, context: Context) {
+        val fileName = "favorite_museums.txt"
+
+        // Use MediaStore for Android 10+
+        val resolver = context.contentResolver
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+        }
+
+        val uri = resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+        if (uri != null) {
+            try {
+                resolver.openOutputStream(uri).use { outputStream ->
+                    writeFavoritesToStream(likedMuseums, outputStream)
+                }
+                Toast.makeText(context, "File saved to Downloads folder.", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(context, "Error saving file: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(context, "Failed to create file.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun writeFavoritesToStream(likedMuseums: List<ArtworkResponse>, outputStream: OutputStream?) {
+        outputStream?.bufferedWriter()?.use { writer ->
+            likedMuseums.forEach { artwork ->
+                val museumData = "Name: ${artwork.fields.name}\n" +
+                        "\tDate: ${artwork.fields.date}\n" +
+                        "\tTechnique: ${artwork.fields.technique}\n" +
+                        "\tDimensions: ${artwork.fields.dimensions}\n" +
+                        "\tInterpretation: ${artwork.fields.interpretation}\n" +
+                        "\tDescription: ${artwork.fields.advancedInfo}\n\n"
+                writer.write(museumData)
+            }
+        }
+    }
+
+
 }
 

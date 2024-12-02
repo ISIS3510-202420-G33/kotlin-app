@@ -17,6 +17,7 @@ import com.artlens.data.services.NetworkUtils
 import com.artlens.view.viewmodels.ViewModelFactory
 import com.artlens.view.composables.LogInScreen
 import com.artlens.view.composables.NoInternetScreen
+import com.artlens.view.composables.NoInternetScreenV2
 import com.artlens.view.viewmodels.LogInViewModel
 
 class LogInActivity : ComponentActivity() {
@@ -51,7 +52,10 @@ class LogInActivity : ComponentActivity() {
                     )
                 }
                     else{
-                        NoInternetScreen()
+                        NoInternetScreenV2(
+                            onBackClick = { onBackPressed() },
+                            textTop = "LOGIN"
+                        )
             }
         }
     }

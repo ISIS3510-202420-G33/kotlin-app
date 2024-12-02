@@ -1,5 +1,6 @@
 package com.artlens.data.facade
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.artlens.data.models.ArtistResponse
@@ -98,5 +99,9 @@ class Facade(
 
     override suspend fun getArtworkRecommendation(userId: Int): List<ArtworkResponse> {
         return analyticsService.getArtworkRecommendation(userId)
+    }
+
+    override fun downloadFavorites(likedMuseums: List<ArtworkResponse>, context: Context){
+        return artworkService.downloadFavorites(likedMuseums, context)
     }
 }

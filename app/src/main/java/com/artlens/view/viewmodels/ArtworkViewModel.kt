@@ -1,6 +1,7 @@
 
 package com.artlens.view.viewmodels
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
 import com.artlens.data.facade.ArtlensFacade
@@ -84,6 +85,13 @@ class ArtworkViewModel(private val facade: ArtlensFacade) : ViewModel() {
     fun fetchArtworkDetail(artworkId: Int, userId: Int) {
         _artworkId.value = artworkId
         checkIfLiked(userId, artworkId)
+    }
+
+    fun downloadFavorites(likedMuseums: List<ArtworkResponse>, context: Context) {
+
+        facade.downloadFavorites(likedMuseums, context)
+
+
     }
 }
 

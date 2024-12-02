@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -359,3 +361,44 @@ fun FeedbackDialog(
         shape = RoundedCornerShape(8.dp)
     )
 }
+
+@Composable
+fun NoInternetDialog(
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+            text = "No Internet Connection",
+            color = Color.Black,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold
+        )},
+
+        text = {
+            Text(
+                text = "Please check your connection and try again.",
+                color = Color.Black,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center // Center-align the text
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Black,   // Button background color
+                    contentColor = Color.White       // Text color inside the button
+                )
+            ) {
+                Text("OK")
+            }
+        },
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .padding(16.dp)
+    )
+}
+
+

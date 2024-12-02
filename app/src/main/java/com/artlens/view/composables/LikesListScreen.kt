@@ -1,15 +1,22 @@
 package com.artlens.view.composables
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,20 +27,34 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.artlens.R
 import com.artlens.view.viewmodels.LikesViewModel
+import androidx.compose.ui.platform.LocalContext
+import com.artlens.data.models.ArtworkResponse
 
 @Composable
 fun LikesListScreen(
     onBackClick: () -> Unit,
     onMuseumClick: (Int) -> Unit,
+    onDownloadClick: (List<ArtworkResponse>) -> Unit,
     likesViewModel: LikesViewModel
 ) {
+    val context = LocalContext.current
     val likedMuseums by likesViewModel.likedMuseums.observeAsState(emptyList())
+    var showDialog by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
+    if (showDialog) {
+        NoInternetDialog(
+            onDismiss = {  showDialog = false }  // Close the dialog
+        )
+    }
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.White)) {
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
@@ -66,6 +87,22 @@ fun LikesListScreen(
                 }
             }
 
+            //Boton para descargar info
+            Button(
+                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
+                shape = RoundedCornerShape(22.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Black,   // Button background color
+                    contentColor = Color.White       // Text color inside the button
+                ),
+                onClick = {
+                    onDownloadClick(likedMuseums)
+                }
+            ) {
+                Text("Download Favorites")
+            }
+
+
             // Lista de museos que el usuario ha marcado como "Me gusta"
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -78,8 +115,16 @@ fun LikesListScreen(
                             description = limitWordss(artwork.fields.advancedInfo ?: "No description available", 20),
                             imageUrl = artwork.fields.image
                         ),
-                        onClick = { onMuseumClick(artwork.pk) },
-                        onRemoveLike = { likesViewModel.removeLike(artwork.pk) }
+                        onClick = {
+                            if (isInternetAvailable(context)) {
+                                onMuseumClick(artwork.pk)
+                            } else {
+                                showDialog = true // Show the dialog when no internet is available
+                            }
+                            },
+
+                        onRemoveLike = { likesViewModel.removeLike(artwork.pk) },
+                        setFalse = {showDialog = true}
                     )
                 }
             }
@@ -91,8 +136,13 @@ fun LikesListScreen(
 fun MuseumLikeCard(
     museum: Recommendations,
     onClick: () -> Unit,
-    onRemoveLike: () -> Unit
+    onRemoveLike: () -> Unit,
+    setFalse: () -> Unit,
+
 ) {
+
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -128,7 +178,15 @@ fun MuseumLikeCard(
 
                         // Ícono de basura
                         IconButton(
-                            onClick = { onRemoveLike() },
+                            onClick = {
+
+                                if (isInternetAvailable(context)) {
+                                    onRemoveLike()
+                                } else {
+                                    setFalse() // Show the dialog when no internet is available
+                                }
+
+                                      },
                             modifier = Modifier
                                 .size(24.dp)
                         ) {
@@ -188,4 +246,11 @@ fun limitWordss(text: String, wordLimit: Int): String {
     } else {
         text
     }
+}
+
+fun isInternetAvailable(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val network = connectivityManager.activeNetwork ?: return false
+    val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+    return activeNetwork.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
 }

@@ -38,86 +38,73 @@ fun MainScreen(
     showDialog: Boolean,
     onDismissDialog: () -> Unit,
     logOutClick: () -> Unit,
-    onViewFavoritesClick: () -> Unit
-
+    onViewFavoritesClick: () -> Unit,
+    onSearchClick: () -> Unit
 ) {
-
     if (showDialog) {
-        
         AlertDialog(
             onDismissRequest = onDismissDialog,
             buttons = {
-                Box(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .padding(16.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Text(
+                        text = "Hi ${UserPreferences.getUsername()}",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(Color.Black)
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(
+                        onClick = {
+                            onDismissDialog()
+                            onViewFavoritesClick()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Transparent,
+                            contentColor = Color.Black
+                        ),
+                        elevation = ButtonDefaults.elevation(0.dp)
                     ) {
+                        Text("View Favorites")
+                    }
 
-                        Text(
-                            text = "Hi ${UserPreferences.getUsername()}",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        // Horizontal Divider
-                        Divider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(1.dp)
-                                .background(Color.Black)
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-                        // First Option Button
-                        Button(
-                            onClick = {
-                                onDismissDialog()
-                                onViewFavoritesClick() },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .clip(CircleShape),
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color.Transparent,
-                                contentColor = Color.Black
-                            ),
-                            elevation = ButtonDefaults.elevation(0.dp)
-                        ) {
-                            Text("View Favorites")
-                        }
-
-                        // Second Option Button
-                        Button(
-                            onClick = {
-                                logOutClick()
-                                onDismissDialog()}
-                            ,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .clip(CircleShape),
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color.Transparent,
-                                contentColor = Color.Black
-                            ),
-                            elevation = ButtonDefaults.elevation(0.dp)
-                        ) {
-                            Text("Log Out")
-                        }
+                    Button(
+                        onClick = {
+                            logOutClick()
+                            onDismissDialog()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Transparent,
+                            contentColor = Color.Black
+                        ),
+                        elevation = ButtonDefaults.elevation(0.dp)
+                    ) {
+                        Text("Log Out")
                     }
                 }
             }
         )
     }
-
-
 
     Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
         Column(
@@ -125,16 +112,13 @@ fun MainScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Barra superior con la flecha atrás y un título centrado
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(80.dp)
-                    .background(Color.White),
+                    .height(80.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Flecha de retroceso
                 IconButton(onClick = onBackClick) {
                     Image(
                         painter = painterResource(id = R.drawable.arrow),
@@ -143,14 +127,12 @@ fun MainScreen(
                     )
                 }
 
-                // Título centrado
                 Text(
                     text = "HOME",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
 
-                // Icono de perfil a la derecha
                 IconButton(onClick = onUserClick) {
                     Image(
                         painter = painterResource(id = R.drawable.profile),
@@ -161,11 +143,12 @@ fun MainScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp)
                     .background(Color(0xFFE0E0E0), shape = CircleShape)
+                    .clickable { onSearchClick() }
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
                 Text(
@@ -178,25 +161,26 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // Título centrado
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Text(
                     text = "Museums in your city",
                     fontSize = 20.sp,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    fontWeight = FontWeight.Bold
                 )
             }
+
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Carrusel de imágenes con URLs e IDs del backend
-            MuseumImageCarousel(imageUrls = imageUrls, onMuseumClick = onMuseumClick, museumIds = museumIds)
+            MuseumImageCarousel(
+                imageUrls = imageUrls,
+                onMuseumClick = onMuseumClick,
+                museumIds = museumIds
+            )
 
-
-
-            // Botones de acción
             Spacer(modifier = Modifier.height(100.dp))
+
             Button(
-                onClick = { onMuseumsClick() },
+                onClick = onMuseumsClick,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Black,
@@ -207,6 +191,7 @@ fun MainScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
             Button(
                 onClick = onMapClick,
                 modifier = Modifier.fillMaxWidth(),
@@ -219,8 +204,9 @@ fun MainScreen(
             }
 
             Spacer(modifier = Modifier.height(8.dp))
+
             Button(
-                onClick =  onArtistClick,
+                onClick = onArtistClick,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Black,
@@ -231,7 +217,6 @@ fun MainScreen(
             }
         }
 
-        // Barra de navegación inferior sobrepuesta
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -253,7 +238,7 @@ fun MainScreen(
             IconButton(onClick = onCameraClick) {
                 Image(
                     painter = painterResource(id = R.drawable.camera),
-                    contentDescription = "Museos",
+                    contentDescription = "Camera",
                     modifier = Modifier.size(30.dp)
                 )
             }
@@ -261,7 +246,7 @@ fun MainScreen(
             IconButton(onClick = onRecommendationClick) {
                 Image(
                     painter = painterResource(id = R.drawable.fire),
-                    contentDescription = "Artistas",
+                    contentDescription = "Recommendations",
                     modifier = Modifier.size(30.dp)
                 )
             }
@@ -269,9 +254,12 @@ fun MainScreen(
     }
 }
 
-
 @Composable
-fun MuseumImageCarousel(imageUrls: List<String>, onMuseumClick: (Int) -> Unit, museumIds: List<Int>) {
+fun MuseumImageCarousel(
+    imageUrls: List<String>,
+    onMuseumClick: (Int) -> Unit,
+    museumIds: List<Int>
+) {
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
@@ -282,15 +270,13 @@ fun MuseumImageCarousel(imageUrls: List<String>, onMuseumClick: (Int) -> Unit, m
                 painter = rememberAsyncImagePainter(model = imageUrl),
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(8.dp)
-                    .width(310.dp)
-                    .height(500.dp)
+                    .padding(horizontal = 4.dp)
+                    .size(200.dp)
                     .clip(CircleShape)
-                    .clickable {
-                        onMuseumClick(museumIds[index])
-                    },
+                    .clickable { onMuseumClick(museumIds[index]) },
                 contentScale = ContentScale.Crop
             )
         }
     }
 }
+
