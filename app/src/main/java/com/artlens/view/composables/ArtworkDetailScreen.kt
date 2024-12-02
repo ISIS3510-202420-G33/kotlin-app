@@ -23,25 +23,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.artlens.R
 import com.artlens.data.models.ArtworkResponse
-
-@Composable
-fun ForumEntry(userName: String, comment: String) {
-    Column {
-        Text(text = userName, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-        Text(
-            text = comment,
-            style = MaterialTheme.typography.body2,
-            modifier = Modifier.padding(start = 8.dp)
-        )
-        Divider(color = Color.Black, thickness = 1.dp)
-    }
-}
-
 
 @Composable
 fun ArtworkDetailScreen(
@@ -54,66 +39,46 @@ fun ArtworkDetailScreen(
     onMoreInfoClick: (Int) -> Unit,
     onInterpretationSpeakClick: (String) -> Unit,
     onCrashButtonClick: () -> Unit,
-    modifier: Modifier = Modifier // Nuevo parámetro para el modifier
+    onCommentsClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
-        val context = LocalContext.current
-
-        // Color personalizado para la estrella de "like"
-        val likedColor = Color(red = 160, green = 82, blue = 45)
-
-        var newComment by remember { mutableStateOf("") }
-        var comments by remember {
-            mutableStateOf(
-                listOf(
-                    "Santi2001: Nice artwork!!",
-                    "ArtLover287: Overrated :c",
-                    "Usuario123: Give us your opinion"
-                )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "ARTWORK", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Image(
+                            painter = painterResource(id = R.drawable.arrow),
+                            contentDescription = "Back Arrow",
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { /* Acción de perfil */ }) {
+                        Image(
+                            painter = painterResource(id = R.drawable.profile),
+                            contentDescription = "Profile Icon",
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
+                },
+                backgroundColor = Color.White
             )
+        },
+        bottomBar = {
+            BottomNavigationBar()
         }
-
+    ) { paddingValues ->
+        // Contenedor desplazable para el contenido principal
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues)
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-
-            // Barra superior con la flecha atrás y el título centrado
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .background(Color.White),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Image(
-                        painter = painterResource(id = R.drawable.arrow),
-                        contentDescription = "Back Arrow",
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
-
-                Text(
-                    text = "ARTWORK",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                )
-
-                IconButton(onClick = { /* Acción de perfil */ }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = "Profile Icon",
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
-            }
-
             // Fila para la estrella de "like"
             Row(
                 modifier = Modifier
@@ -121,6 +86,7 @@ fun ArtworkDetailScreen(
                     .padding(top = 8.dp),
                 horizontalArrangement = Arrangement.End
             ) {
+                val likedColor = Color(red = 160, green = 82, blue = 45)
                 IconButton(onClick = onLikeClick) {
                     Icon(
                         imageVector = if (isLiked) Icons.Filled.Star else Icons.Outlined.StarBorder,
@@ -141,18 +107,16 @@ fun ArtworkDetailScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Imagen de la obra
                 AsyncImage(
-                    model = ImageRequest.Builder(context)
+                    model = ImageRequest.Builder(LocalContext.current)
                         .data(it.fields.image)
                         .crossfade(true)
                         .build(),
                     contentDescription = it.fields.name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp),
-                    contentScale = ContentScale.Crop
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.Fit
                 )
+
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -166,13 +130,10 @@ fun ArtworkDetailScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Botón para simular el crash, centrado en la parte superior
+                // Botón para simular el crash
                 Button(
                     onClick = { onCrashButtonClick() },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .align(Alignment.CenterHorizontally),
+                    modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.Red,
                         contentColor = Color.White
@@ -181,7 +142,9 @@ fun ArtworkDetailScreen(
                     Text("Crash App Simulation")
                 }
 
-                // Ícono de audio dinámico (Headphones o Pause)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Ícono de audio dinámico
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
                         onClick = {
@@ -207,6 +170,7 @@ fun ArtworkDetailScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // Botón para ir a la pantalla del artista
                 Button(
                     onClick = { onMoreInfoClick(it.fields.artist) },
                     modifier = Modifier.fillMaxWidth(),
@@ -220,75 +184,58 @@ fun ArtworkDetailScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Foro de opiniones
+                // Botón para ir a la pantalla de comentarios
                 Text(text = "FORUM", fontWeight = FontWeight.Bold)
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 300.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    comments.forEach { comment ->
-                        ForumEntry(
-                            userName = comment.substringBefore(":"),
-                            comment = comment.substringAfter(":")
-                        )
-                    }
-
-                    // Campo para agregar nuevo comentario
-                    TextField(
-                        value = newComment,
-                        onValueChange = { newComment = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Add your comment...") },
-                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
-                        keyboardActions = KeyboardActions(onSend = {
-                            if (newComment.isNotBlank()) {
-                                comments = comments + "NewUser: $newComment"
-                                newComment = ""
-                            }
-                        })
+                Button(
+                    onClick = onCommentsClick,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Gray,
+                        contentColor = Color.White
                     )
+                ) {
+                    Text("View Comments")
                 }
             } ?: run {
                 Text(text = "Artwork not found", style = MaterialTheme.typography.body1)
             }
         }
+    }
+}
 
-        // Barra de navegación inferior
-        Row(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(vertical = 8.dp)
-                .height(50.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { /* Acción para ir a Home */ }) {
-                Image(
-                    painter = painterResource(id = R.drawable.house),
-                    contentDescription = "Home",
-                    modifier = Modifier.size(30.dp)
-                )
-            }
+@Composable
+fun BottomNavigationBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(vertical = 8.dp)
+            .height(50.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = { /* Acción para ir a Home */ }) {
+            Image(
+                painter = painterResource(id = R.drawable.house),
+                contentDescription = "Home",
+                modifier = Modifier.size(30.dp)
+            )
+        }
 
-            IconButton(onClick = { /* Acción para ir a Museos */ }) {
-                Image(
-                    painter = painterResource(id = R.drawable.camera),
-                    contentDescription = "Museos",
-                    modifier = Modifier.size(30.dp)
-                )
-            }
+        IconButton(onClick = { /* Acción para ir a Museos */ }) {
+            Image(
+                painter = painterResource(id = R.drawable.camera),
+                contentDescription = "Museos",
+                modifier = Modifier.size(30.dp)
+            )
+        }
 
-            IconButton(onClick = { /* Acción para ir a Artistas */ }) {
-                Image(
-                    painter = painterResource(id = R.drawable.fire),
-                    contentDescription = "Artistas",
-                    modifier = Modifier.size(30.dp)
-                )
-            }
+        IconButton(onClick = { /* Acción para ir a Artistas */ }) {
+            Image(
+                painter = painterResource(id = R.drawable.fire),
+                contentDescription = "Artistas",
+                modifier = Modifier.size(30.dp)
+            )
         }
     }
 }

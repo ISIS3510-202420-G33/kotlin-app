@@ -8,6 +8,7 @@ import com.artlens.data.models.CommentResponse
 import com.artlens.data.models.CreateUserResponse
 import com.artlens.data.models.MuseumResponse
 import com.artlens.data.models.UserResponse
+import retrofit2.Call
 
 interface ArtlensFacade {
     //ArtistAPI

@@ -14,6 +14,7 @@ import com.artlens.data.services.ArtworkService
 import com.artlens.data.services.CommentService
 import com.artlens.data.services.MuseumService
 import com.artlens.data.services.UserService
+import retrofit2.Call
 
 class Facade(
     private val artistService: ArtistService,

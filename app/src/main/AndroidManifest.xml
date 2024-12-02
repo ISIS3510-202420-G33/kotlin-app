@@ -117,6 +117,9 @@
             android:exported="true">
         </activity>
 
+        <activity android:name=".view.activities.CommentsActivity" />
+
+
 
 
 
