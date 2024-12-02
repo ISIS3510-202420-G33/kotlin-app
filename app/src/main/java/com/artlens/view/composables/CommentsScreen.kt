@@ -16,7 +16,8 @@ import com.artlens.data.models.CommentResponse
 fun CommentsScreen(
     comments: List<CommentResponse>,
     onBackClick: () -> Unit,
-    onPostComment: (String) -> Unit
+    onPostComment: (String) -> Unit,
+    isLoggedIn: Boolean
 ) {
     var newComment by remember { mutableStateOf("") }
 
@@ -64,25 +65,36 @@ fun CommentsScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         // Campo de texto para nuevo comentario
-        TextField(
-            value = newComment,
-            onValueChange = { newComment = it },
-            placeholder = { Text("Write a comment...") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        if (isLoggedIn) {
+            // Campo de texto para nuevo comentario
+            TextField(
+                value = newComment,
+                onValueChange = { newComment = it },
+                placeholder = { Text("Write a comment...") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        // Botón para publicar comentario
-        Button(
-            onClick = {
-                onPostComment(newComment)
-                newComment = "" // Limpiar el campo tras publicar
-            },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = newComment.isNotBlank()
-        ) {
-            Text("Post Comment")
+            // Botón para publicar comentario
+            Button(
+                onClick = {
+                    onPostComment(newComment)
+                    newComment = "" // Limpiar el campo tras publicar
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = newComment.isNotBlank()
+            ) {
+                Text("Post Comment")
+            }
+        } else {
+            // Mensaje si el usuario no está logueado
+            Text(
+                text = "You must be logged in to post a comment.",
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(8.dp),
+                color = MaterialTheme.colors.error
+            )
         }
     }
 }
