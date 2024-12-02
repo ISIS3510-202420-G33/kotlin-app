@@ -117,19 +117,13 @@
             android:exported="true">
         </activity>
 
+        <activity android:name=".view.activities.CommentsActivity" />
+
         <activity
             android:name=".view.activities.SearchActivity"
             android:label="Search"
             android:exported="true">
         </activity>
-
-
-
-
-
-
-
-
 
     </application>
 </manifest>

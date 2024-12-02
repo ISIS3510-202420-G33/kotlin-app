@@ -1,5 +1,7 @@
+
 package com.artlens.data.api
 
+import androidx.lifecycle.LiveData
 import com.artlens.data.models.CommentRequest
 import com.artlens.data.models.CommentResponse
 import retrofit2.Call
@@ -13,7 +15,6 @@ interface CommentApi {
     @POST("/comments/")
     fun postComment(@Body comment: CommentRequest): Call<Void>
 
-    @GET("/artworks/comments/{artworkId}")
+    @GET("artworks/comments/{artworkId}")
     fun getCommentsByArtwork(@Path("artworkId") artworkId: Int): Call<List<CommentResponse>>
 }
-

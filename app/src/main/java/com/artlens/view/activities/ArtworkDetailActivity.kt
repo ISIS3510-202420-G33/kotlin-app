@@ -77,7 +77,13 @@ class ArtworkDetailActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                         toggleTTS(interpretation)
                     },
                     onCrashButtonClick = { registerCrash() },
-                    modifier = Modifier.padding(paddingValues) // Añadir el padding aquí
+                    modifier = Modifier.padding(paddingValues), // Añadir el padding aquí
+                    onCommentsClick = {
+                        // Redirigir a la nueva actividad de comentarios
+                        val intent = Intent(this@ArtworkDetailActivity, CommentsActivity::class.java)
+                        intent.putExtra("ARTWORK_ID", artworkId) // Pasar el ID de la obra
+                        startActivity(intent)
+                    },
                 )
             }
         }

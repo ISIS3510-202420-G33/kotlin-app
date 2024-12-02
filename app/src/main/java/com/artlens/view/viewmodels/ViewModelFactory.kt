@@ -40,6 +40,9 @@ class ViewModelFactory(private val facade: ArtlensFacade) : ViewModelProvider.Fa
             modelClass.isAssignableFrom(RecommendationsViewModel::class.java) -> {
                 RecommendationsViewModel(facade) as T
             }
+            modelClass.isAssignableFrom(CommentsViewModel::class.java) -> {
+                CommentsViewModel(facade) as T
+            }
 
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
