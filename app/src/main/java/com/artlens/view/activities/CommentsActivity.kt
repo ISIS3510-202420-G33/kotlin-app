@@ -1,5 +1,6 @@
 package com.artlens.view.activities
 
+import android.content.ContentValues.TAG
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
@@ -19,6 +20,9 @@ import com.artlens.view.viewmodels.ViewModelFactory
 import com.artlens.view.composables.CommentsScreen
 import com.artlens.view.composables.NoInternetScreen
 import com.artlens.view.viewmodels.CommentsViewModel
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class CommentsActivity : ComponentActivity() {
 
@@ -31,6 +35,22 @@ class CommentsActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val db = Firebase.firestore
+
+        val user = hashMapOf(
+            "Count" to "1",
+            "Fecha" to Timestamp.now()
+        )
+
+        db.collection("BQ37")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
 
         // Configurar el BroadcastReceiver para monitorear la conexión a internet
         networkReceiver = NetworkReceiver { isConnected = it }
