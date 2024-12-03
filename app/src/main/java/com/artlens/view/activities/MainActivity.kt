@@ -1,6 +1,8 @@
 package com.artlens.view.activities
 
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -9,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import com.artlens.view.composables.MainScreen
+import com.artlens.view.composables.NoInternetScreen
 import com.artlens.view.viewmodels.MuseumsListViewModel
 import com.artlens.data.facade.FacadeProvider
 import com.artlens.view.viewmodels.ViewModelFactory
@@ -16,6 +19,8 @@ import com.artlens.utils.UserPreferences
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.artlens.data.services.NetworkReceiver
+import com.artlens.data.services.NetworkUtils
 
 class MainActivity : ComponentActivity() {
 
@@ -25,73 +30,100 @@ class MainActivity : ComponentActivity() {
 
     private val db = Firebase.firestore // Inicializa Firestore
 
+    private lateinit var networkReceiver: NetworkReceiver
+    private var isConnected by mutableStateOf(true)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Configurar el BroadcastReceiver para monitorear la conexión a internet
+        networkReceiver = NetworkReceiver { isConnected = it }
+        registerReceiver(networkReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+
         setContent {
-            // Mostrar contenido principal si hay conexión
-            val museums by museumsViewModel.museumsLiveData.observeAsState(emptyList())
-            val imageUrls = museums?.map { it.fields.image }
-            val museumIds = museums?.map { it.pk }
+            // Verificar el estado de conexión al iniciar
+            LaunchedEffect(Unit) {
+                isConnected = NetworkUtils.isInternetAvailable(this@MainActivity)
+            }
 
-            var showDialog by remember { mutableStateOf(false) }
+            if (isConnected) {
+                // Mostrar contenido principal si hay conexión
+                val museums by museumsViewModel.museumsLiveData.observeAsState(emptyList())
+                val imageUrls = museums?.map { it.fields.image }
+                val museumIds = museums?.map { it.pk }
 
-            if (imageUrls != null && museumIds != null) {
-                MainScreen(
-                    imageUrls = imageUrls,
-                    showDialog = showDialog,
-                    museumIds = museumIds,
-                    onMapClick = {
-                        val intent = Intent(this, MapsActivity::class.java)
-                        startActivity(intent)
-                    },
-                    onMuseumClick = { museumId ->
-                        logCarouselInteraction(museumId) // Registrar clic en la imagen
-                        val intent = Intent(this, MuseumsDetailActivity::class.java)
-                        intent.putExtra("MUSEUM_ID", museumId)
-                        startActivity(intent)
-                    },
-                    onMuseumsClick = {
-                        val intent = Intent(this, MuseumsListActivity::class.java)
-                        startActivity(intent)
-                    },
-                    onArtistClick = {
-                        val intent = Intent(this, ArtistListActivity::class.java)
-                        startActivity(intent)
-                    },
-                    onRecommendationClick = {
-                        val intent = Intent(this, RecommendationsActivity::class.java)
-                        startActivity(intent)
-                    },
-                    onBackClick = {
-                        // Aquí puedes manejar el comportamiento de retroceso si es necesario
-                    },
-                    onCameraClick = {
-                        val intent = Intent(this, qrCodeActivity::class.java)
-                        startActivity(intent)
-                    },
-                    onDismissDialog = { showDialog = false },
-                    logOutClick = { UserPreferences.clearUserData() },
-                    onUserClick = {
-                        val pk = UserPreferences.getPk()
-                        if (pk != null && pk >= 0) {
-                            showDialog = true
-                        } else {
-                            val intent = Intent(this, LogInActivity::class.java)
+                var showDialog by remember { mutableStateOf(false) }
+
+                if (imageUrls != null && museumIds != null) {
+                    MainScreen(
+                        imageUrls = imageUrls,
+                        showDialog = showDialog,
+                        museumIds = museumIds,
+                        onMapClick = {
+                            val intent = Intent(this, MapsActivity::class.java)
+                            startActivity(intent)
+                        },
+                        onMuseumClick = { museumId ->
+                            logCarouselInteraction(museumId) // Registrar clic en la imagen
+                            val intent = Intent(this, MuseumsDetailActivity::class.java)
+                            intent.putExtra("MUSEUM_ID", museumId)
+                            startActivity(intent)
+                        },
+                        onMuseumsClick = {
+                            val intent = Intent(this, MuseumsListActivity::class.java)
+                            startActivity(intent)
+                        },
+                        onArtistClick = {
+                            val intent = Intent(this, ArtistListActivity::class.java)
+                            startActivity(intent)
+                        },
+                        onNewsClick = {
+                            val intent = Intent(this, NewsActivity::class.java)
+                            startActivity(intent)
+                        },
+                        onRecommendationClick = {
+                            val intent = Intent(this, RecommendationsActivity::class.java)
+                            startActivity(intent)
+                        },
+                        onBackClick = {
+                            // Aquí puedes manejar el comportamiento de retroceso si es necesario
+                        },
+                        onCameraClick = {
+                            val intent = Intent(this, qrCodeActivity::class.java)
+                            startActivity(intent)
+                        },
+                        onDismissDialog = { showDialog = false },
+                        logOutClick = { UserPreferences.clearUserData() },
+                        onUserClick = {
+                            val pk = UserPreferences.getPk()
+                            if (pk != null && pk >= 0) {
+                                showDialog = true
+                            } else {
+                                val intent = Intent(this, LogInActivity::class.java)
+                                startActivity(intent)
+                            }
+                        },
+                        onViewFavoritesClick = {
+                            val intent = Intent(this, ListScreenActivity::class.java)
+                            startActivity(intent)
+                        },
+                        onSearchClick = {
+                            val intent = Intent(this, SearchActivity::class.java)
                             startActivity(intent)
                         }
-                    },
-                    onViewFavoritesClick = {
-                        val intent = Intent(this, ListScreenActivity::class.java)
-                        startActivity(intent)
-                    },
-                    onSearchClick = {
-                        val intent = Intent(this, SearchActivity::class.java)
-                        startActivity(intent)
-                    }
-                )
+                    )
+                }
+            } else {
+                // Mostrar pantalla de espera si no hay conexión
+                NoInternetScreen()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Desregistrar el BroadcastReceiver para evitar fugas de memoria
+        unregisterReceiver(networkReceiver)
     }
 
     // Función para registrar las interacciones con el carrusel
