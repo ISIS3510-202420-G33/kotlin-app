@@ -46,6 +46,8 @@
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             android:exported="true">
         </activity>
+        <!-- Declarar la actividad NewsActivity -->
+        <activity android:name=".view.activities.NewsActivity" />
 
         <!-- ArtistDetailActivity -->
         <activity

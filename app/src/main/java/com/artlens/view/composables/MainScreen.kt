@@ -35,6 +35,7 @@ fun MainScreen(
     onUserClick: () -> Unit,
     onCameraClick: () -> Unit,
     onMuseumsClick: () -> Unit,
+    onNewsClick: () -> Unit,
     showDialog: Boolean,
     onDismissDialog: () -> Unit,
     logOutClick: () -> Unit,
@@ -214,6 +215,20 @@ fun MainScreen(
                 )
             ) {
                 Text("View Artists")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+
+            Button(
+                onClick = onNewsClick,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Black,
+                    contentColor = Color.White
+                )
+            ) {
+                Text("View News")
             }
         }
 
